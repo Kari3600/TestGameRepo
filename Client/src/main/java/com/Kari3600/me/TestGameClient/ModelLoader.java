@@ -11,6 +11,7 @@ import java.nio.ShortBuffer;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.Kari3600.me.TestGameClient.util.Object3D;
 import com.Kari3600.me.TestGameClient.util.TextureInputStream;
@@ -29,6 +30,7 @@ import de.javagl.jgltf.impl.v2.MeshPrimitive;
 import de.javagl.jgltf.impl.v2.TextureInfo;
 
 public class ModelLoader {
+    private static HashMap<String,Object3D> models = new HashMap<String,Object3D>();
     enum primitiveType {
         SIGNED_BYTE(5120,1),
         UNSIGNED_BYTE(5121,1),
@@ -80,6 +82,23 @@ public class ModelLoader {
             e.printStackTrace();
             return null;
         } 
+    }
+
+    public static Object3D getObject3D(String name) {
+        if (models.containsKey(name)) return models.get(name).clone();
+        models.put(name, createObject3D(name));
+        return models.get(name).clone();
+    }
+
+    private static Object3D createObject3D(String name) {
+        switch (name) {
+            case "Braum":
+                return ModelLoader.getObject3DfromGLB("Braum",0).movePivot(new Vector3(-4500,0,-2000));
+            case "Boom":
+                return ModelLoader.getObject3DfromGLB("Braum",1).movePivot(new Vector3(-4500,0,-2000));
+            default:
+                return null;
+        }
     }
 
     public static Object3D getObject3DfromGLB(String name, int MeshID) {
@@ -234,7 +253,7 @@ public class ModelLoader {
                         // Now you have the coordinates of the triangle's vertices
                         triangles.add(new Triangle(vertices[index0],vertices[index1],vertices[index2],new float[]{0.5F,0.5F,0.5F}));
                     }
-                    return new Object3D(triangles, new Vector3(),new TextureInputStream(imageBuffer));
+                    return new Object3D(triangles, new TextureInputStream(imageBuffer));
                 }
         } catch (IOException e) {
             e.printStackTrace();

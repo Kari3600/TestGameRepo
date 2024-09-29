@@ -21,7 +21,7 @@ public class Object3D {
         testTriangles.add(new Triangle(A, B, D,new float[]{0f,1f,0f}));
         testTriangles.add(new Triangle(A, C, D,new float[]{0f,0f,1f}));
         testTriangles.add(new Triangle(B, C, D,new float[]{1f,1f,1f}));
-        return new Object3D(testTriangles, new Vector3());
+        return new Object3D(testTriangles);
     }
 
     private final HashSet<Triangle> triangles;
@@ -29,9 +29,6 @@ public class Object3D {
     private final TextureInputStream textureIS;
     private float[] Matrix = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
     
-    public Vector3 getPosition() {
-        return new Vector3(Matrix[12],Matrix[13],Matrix[14]);
-    }
 
     public Object3D movePivot(Vector3 position) {
         HashSet<Vertex> vertices = new HashSet<Vertex>();
@@ -43,34 +40,6 @@ public class Object3D {
         for (Vertex vertex : vertices) {
             vertex.setPosition(vertex.getPosition().add(position));
         }
-        return this;
-    }
-
-    public Object3D setPosition(Vector3 position) {
-        Matrix[12] = position.x;
-        Matrix[13] = position.y;
-        Matrix[14] = position.z;
-        return this;
-    }
-
-    public float[] getMatrix() {
-        return Matrix;
-    }
-
-    public Object3D setRotation(float angle) {
-        Matrix[0] = (float)Math.cos(angle);
-        Matrix[2] = (float)Math.sin(angle);
-        Matrix[8] = (float)-Math.sin(angle);
-        Matrix[10] = (float)Math.cos(angle);
-        return this;
-    }
-
-    public Object3D lookVector(Vector3 v) {
-        Vector3 vn = v.normalize();
-        Matrix[2] = vn.x;
-        Matrix[10] = vn.z;
-        Matrix[0] = -vn.z;
-        Matrix[8] = vn.x;
         return this;
     }
 
@@ -128,20 +97,18 @@ public class Object3D {
     }
 
     public Object3D clone() {
-        Object3D clone = new Object3D(triangles, getPosition().clone());
+        Object3D clone = new Object3D(triangles);
         clone.texture = this.texture;
         return clone;
     }
 
-    public Object3D(HashSet<Triangle> triangles, Vector3 position) {
+    public Object3D(HashSet<Triangle> triangles) {
         this.textureIS = null;
         this.triangles = triangles;
-        setPosition(position);
     }
 
-    public Object3D(HashSet<Triangle> triangles, Vector3 position, TextureInputStream textureIS) {
+    public Object3D(HashSet<Triangle> triangles, TextureInputStream textureIS) {
         this.textureIS = textureIS;
         this.triangles = triangles;
-        setPosition(position);
     }
 }

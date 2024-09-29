@@ -1,15 +1,16 @@
-package com.Kari3600.me.TestGameServer;
+package com.Kari3600.me.TestGameClient;
 
 import java.util.Set;
 import java.util.HashSet;
 import java.util.TimerTask;
 
-import com.Kari3600.me.TestGameCommon.Entity;
-import com.Kari3600.me.TestGameCommon.Path;
 import com.Kari3600.me.TestGameCommon.Champions.Champion;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
+import com.Kari3600.me.TestGameCommon.Entity;
+import com.Kari3600.me.TestGameCommon.GameEngine;
+import com.Kari3600.me.TestGameCommon.Path;
 
-public class GameEngine extends TimerTask {
+public class GameEngineClient extends TimerTask implements GameEngine {
 
     private final float TPS = 20;
     private Champion character;
@@ -17,11 +18,11 @@ public class GameEngine extends TimerTask {
     private long tick = 0;
     private long lastTick = 0;
 
-    public void registerEntity(Entity entity) {
+    public void addEntity(Entity entity) {
         entities.add(entity);
     }
 
-    public void unregisterEntity(Entity entity) {
+    public void removeEntity(Entity entity) {
         entities.remove(entity);
     }
 
@@ -35,10 +36,6 @@ public class GameEngine extends TimerTask {
 
     public Set<Entity> getAllEntities() {
         return entities;
-    }
-
-    public synchronized void createPlayerPath(Vector3 destination) {
-        character.setPath(new Path(character, destination));
     }
 
     @Override

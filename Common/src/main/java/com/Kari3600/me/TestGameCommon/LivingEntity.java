@@ -1,16 +1,14 @@
 package com.Kari3600.me.TestGameCommon;
 
-import com.Kari3600.me.TestGameCommon.util.Object3D;
-
 public abstract class LivingEntity extends Entity {
 
     private int maxHealth;
     private int health;
 
+    protected abstract int maxHealth();
     public int getMaxHealth() {
         return maxHealth;
     }
-
     public int getHealth() {
         return health;
     }
@@ -21,13 +19,8 @@ public abstract class LivingEntity extends Entity {
 
     public abstract void onDeath(Entity killer);
 
-    public LivingEntity(Object3D model, int collisionRadius, int basicMaxHealth) {
-        super(model,collisionRadius);
-        this.maxHealth = basicMaxHealth;
-        this.health = basicMaxHealth;
-    }
-
-    public LivingEntity() {
-        super();
+    public LivingEntity(GameEngine ge) {
+        super(ge);
+        this.maxHealth = maxHealth();
     }
 }

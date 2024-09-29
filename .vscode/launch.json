@@ -6,18 +6,25 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Current File",
+            "name": "Main",
             "request": "launch",
-            "mainClass": "${file}"
+            "mainClass": "com.Kari3600.me.TestGameClient.Main",
+            "projectName": "client",
+            "console": "externalTerminal"
         },
         {
             "type": "java",
             "name": "Main",
             "request": "launch",
-            "mainClass": "com.Kari3600.me.TestGameClient.Main",
-            "projectName": "TestGame",
-            "console": "externalTerminal",
-            //"vmArgs": ["--add-exports java.base/java.lang=ALL-UNNAMED","--add-exports java.desktop/sun.awt=ALL-UNNAMED","--add-exports java.desktop/sun.java2d=ALL-UNNAMED"]
+            "mainClass": "com.Kari3600.me.TestGameServer.Main",
+            "projectName": "server",
+            "console": "externalTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
         }
     ]
 }

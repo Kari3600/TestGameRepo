@@ -3,7 +3,6 @@ package com.Kari3600.me.TestGameCommon;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.Kari3600.me.TestGameCommon.util.Object3D;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 
 public class ProjectileEntity extends Entity {
@@ -16,6 +15,11 @@ public class ProjectileEntity extends Entity {
     private ProjectileRunnable onHit;
 
     private Set<Entity> entitiesHit = new HashSet<Entity>();
+
+    @Override
+    protected int collisionRadius() {
+        return 0;
+    }
 
     @Override
     public void perTick(float TPS) {
@@ -37,13 +41,14 @@ public class ProjectileEntity extends Entity {
         }
     }
 
-    public ProjectileEntity(Entity caster, Object3D model, int collisionRadius, int speed, int maxDistance, Vector3 position, Vector3 direction, boolean piercing, ProjectileRunnable onHit) {
-        super(model,collisionRadius);
-        model.setPosition(position);
+    public ProjectileEntity(GameEngine ge, Entity caster, int speed, int maxDistance, Vector3 position, Vector3 direction, boolean piercing, int collisionRadius, ProjectileRunnable onHit) {
+        super(ge);
+        setPosition(position);
         this.speed = speed;
         this.maxDistance = maxDistance;
         this.direction = direction;
         this.piercing = piercing;
+        setCollisionRadius(collisionRadius);
         this.onHit = onHit;
         entitiesHit.add(caster);
     }

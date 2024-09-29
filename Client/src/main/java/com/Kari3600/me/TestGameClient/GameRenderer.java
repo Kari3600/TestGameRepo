@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import com.Kari3600.me.TestGameCommon.Champions.Champion;
 import com.Kari3600.me.TestGameClient.util.Object2D;
 import com.Kari3600.me.TestGameClient.util.Object3D;
-//import com.Kari3600.me.TestGameClient.util.TextureInputStream;
 import com.Kari3600.me.TestGameCommon.util.Vector2;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 import com.jogamp.opengl.GL;
@@ -37,7 +36,7 @@ public class GameRenderer implements GLEventListener {
     private final TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
     private final JFrame frame;
     private final GLCanvas canvas;
-    private GameEngine ge = Main.getGameEngine();
+    private GameEngineClient ge = Main.getGameEngine();
     private HashSet<Object3D> objects3D = new HashSet<Object3D>();
     private HashSet<Object2D> objects2D = new HashSet<Object2D>();
     private int cameraDistance = 45000;

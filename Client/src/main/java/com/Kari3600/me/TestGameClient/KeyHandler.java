@@ -8,6 +8,7 @@ import java.util.HashSet;
 
 import javax.swing.SwingUtilities;
 
+import com.Kari3600.me.TestGameCommon.GameEngine;
 import com.Kari3600.me.TestGameCommon.Champions.Ability;
 import com.Kari3600.me.TestGameCommon.Champions.Champion;
 import com.Kari3600.me.TestGameCommon.util.Vector2;
@@ -15,7 +16,7 @@ import com.Kari3600.me.TestGameCommon.util.Vector3;
 
 public class KeyHandler implements KeyListener {
 
-    private final GameEngine ge = Main.getGameEngine();
+    private final GameEngineClient ge = Main.getGameEngine();
     private final GameRenderer gr;
     private final HashSet<Integer> pressedKeys = new HashSet<Integer>();
 

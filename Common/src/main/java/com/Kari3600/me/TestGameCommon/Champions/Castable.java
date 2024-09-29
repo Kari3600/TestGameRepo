@@ -7,6 +7,7 @@ public abstract class Castable extends Ability {
     private long toNextCast = 0;
     private long cooldown;
 
+    protected abstract long cooldown();
     protected abstract void onCast(Vector3 location);
 
     @Override
@@ -25,9 +26,9 @@ public abstract class Castable extends Ability {
         return true;
     }
 
-    public Castable(Champion champion, long cooldown) {
+    public Castable(Champion champion) {
         super(champion);
-        this.cooldown = cooldown;
+        this.cooldown = cooldown();
     }
 
 }
