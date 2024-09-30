@@ -176,7 +176,7 @@ public class GameRenderer implements GLEventListener {
             obj.loadTexture();
         }
         try {
-            mapTexture = TextureIO.newTexture(new File("src/main/resources/map.png"),false);
+            mapTexture = TextureIO.newTexture(new File("Client/src/main/resources/map.png"),false);
         } catch (Exception e) {
             e.printStackTrace();
         }

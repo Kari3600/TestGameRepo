@@ -13,9 +13,8 @@ public class StartQueuePacket extends Packet {
     }
 
     @Override
-    protected void toStream(ObjectOutputStream stream) throws IOException,ClassNotFoundException {
+    protected void writeData(ObjectOutputStream stream) throws IOException {
         stream.writeByte(packetID);
-        stream.flush();
     }
     
     public StartQueuePacket() {

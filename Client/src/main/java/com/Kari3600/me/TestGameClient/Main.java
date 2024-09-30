@@ -2,7 +2,7 @@ package com.Kari3600.me.TestGameClient;
 
 import java.util.Timer;
 import java.util.UUID;
-
+import java.io.File;
 import java.net.InetAddress;
 
 import com.Kari3600.me.TestGameClient.gui.ClientPane;

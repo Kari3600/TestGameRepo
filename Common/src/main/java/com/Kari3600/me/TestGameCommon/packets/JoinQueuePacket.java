@@ -13,7 +13,7 @@ public class JoinQueuePacket extends Packet {
         return playerID;
     }
 
-    public void setQueueID(UUID playerID) {
+    public void setPlayerID(UUID playerID) {
         this.playerID = playerID;
     }
 
@@ -23,10 +23,9 @@ public class JoinQueuePacket extends Packet {
     }
 
     @Override
-    protected void toStream(ObjectOutputStream stream) throws IOException,ClassNotFoundException {
+    protected void writeData(ObjectOutputStream stream) throws IOException {
         stream.writeByte(packetID);
         stream.writeObject(playerID);
-        stream.flush();
     }
     public JoinQueuePacket(UUID playerID) {
         this.playerID = playerID;

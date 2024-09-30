@@ -7,12 +7,13 @@ import java.util.HashMap;
 
 public abstract class Packet {
 
-    protected static HashMap<Byte,Class<? extends Packet>> packets = new HashMap<>();
+    private static HashMap<Byte,Class<? extends Packet>> packets = new HashMap<>();
     static {
         Packet.packets.put((byte) 1, JoinQueuePacket.class); 
         Packet.packets.put((byte) 2, QueueCountPacket.class);
         Packet.packets.put((byte) 3, StartQueuePacket.class);
         Packet.packets.put((byte) 4, JoinGamePacket.class);
+        Packet.packets.put((byte) 5, EntityInfoPacket.class);
     }
 
     public static Packet fromStream(ObjectInputStream ois) throws IOException {
@@ -30,7 +31,11 @@ public abstract class Packet {
         }
     }
 
+    public void toStream(ObjectOutputStream stream) throws IOException {
+        writeData(stream);
+        stream.flush();
+    }
     protected abstract void readData(ObjectInputStream stream) throws IOException,ClassNotFoundException;
 
-    protected abstract void toStream(ObjectOutputStream stream) throws IOException,ClassNotFoundException;
+    protected abstract void writeData(ObjectOutputStream stream) throws IOException;
 }

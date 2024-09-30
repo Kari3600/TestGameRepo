@@ -105,7 +105,7 @@ public class ModelLoader {
         try {
             HashSet<Triangle> triangles = new HashSet<Triangle>();
             // Specify the path to your .glb file
-            File glbFile = new File("src/main/resources/"+name+".glb");
+            File glbFile = new File("Client/src/main/resources/"+name+".glb");
 
             // Load the glTF model
             InputStream stream = glbFile.toURI().toURL().openStream();
