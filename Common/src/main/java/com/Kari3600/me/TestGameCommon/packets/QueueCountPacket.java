@@ -5,7 +5,12 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 
 public class QueueCountPacket extends Packet {
-    private static byte packetID = 2;
+    protected static final byte PacketID =  Packet.registerPacketClass(QueueCountPacket.class);
+
+    @Override
+    protected byte getPacketID() {
+        return PacketID;
+    }
 
     private byte count;
 
@@ -17,14 +22,15 @@ public class QueueCountPacket extends Packet {
         this.count = count;
     }
 
-    @Override
-    protected void readData(ObjectInputStream stream) throws IOException,ClassNotFoundException {
-        count = stream.readByte();
+    public static Packet fromStream(ObjectInputStream stream) throws IOException {
+        QueueCountPacket packet = new QueueCountPacket();
+        packet.setCount(stream.readByte());
+        return packet;
     }
 
     @Override
     protected void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeByte(packetID);
+        super.writeData(stream);
         stream.writeByte(count);
     }
 

@@ -2,30 +2,36 @@ package com.Kari3600.me.TestGameCommon.packets;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Packet {
 
-    private static HashMap<Byte,Class<? extends Packet>> packets = new HashMap<>();
-    static {
-        Packet.packets.put((byte) 1, JoinQueuePacket.class); 
-        Packet.packets.put((byte) 2, QueueCountPacket.class);
-        Packet.packets.put((byte) 3, StartQueuePacket.class);
-        Packet.packets.put((byte) 4, JoinGamePacket.class);
-        Packet.packets.put((byte) 5, EntityInfoPacket.class);
+    private static ArrayList<Class<? extends Packet>> packets = new ArrayList<>();
+    private static HashMap<Class<? extends Packet>,Method> packetsMethod = new HashMap<>();
+
+    protected static byte registerPacketClass(Class<? extends Packet> packetClass) {
+        packets.add(packetClass);
+        try {
+            packetsMethod.put(packetClass, packetClass.getMethod("fromStream", ObjectInputStream.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return (byte) packets.indexOf(packetClass);
     }
 
+    protected abstract byte getPacketID();
+
     public static Packet fromStream(ObjectInputStream ois) throws IOException {
-        byte packetId = ois.readByte();
-        Class<? extends Packet> packetClass = packets.get(packetId);
+        byte packetID = ois.readByte();
+        Class<? extends Packet> packetClass = packets.get(packetID);
         if (packetClass == null) {
-            throw new IOException("Unknown packet ID: " + packetId);
+            throw new IOException("Cannot find Class of packet ID: " + packetID);
         }
         try {
-            Packet packet = packetClass.getConstructor().newInstance();
-            packet.readData(ois);
-            return packet;
+            return (Packet) packetsMethod.get(packetClass).invoke(null, ois);
         } catch (ReflectiveOperationException e) {
             throw new IOException("Failed to create packet instance", e);
         }
@@ -35,7 +41,9 @@ public abstract class Packet {
         writeData(stream);
         stream.flush();
     }
-    protected abstract void readData(ObjectInputStream stream) throws IOException,ClassNotFoundException;
 
-    protected abstract void writeData(ObjectOutputStream stream) throws IOException;
+    protected void writeData(ObjectOutputStream stream) throws IOException {
+        byte packetID = getPacketID();
+        stream.writeByte(packetID);
+    }
 }

@@ -1,20 +1,19 @@
 package com.Kari3600.me.TestGameCommon.packets;
 
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.IOException;
 
 public class JoinGamePacket extends Packet {
-    private static byte packetID = 4;
+
+    protected static final byte PacketID =  Packet.registerPacketClass(JoinGamePacket.class);
 
     @Override
-    protected void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        
+    protected byte getPacketID() {
+        return PacketID;
     }
 
-    @Override
-    protected void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeByte(packetID);
+    public static Packet fromStream(ObjectInputStream ois) throws IOException {
+        return new JoinGamePacket();
     }
     
     public JoinGamePacket() {

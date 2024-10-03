@@ -9,10 +9,10 @@ import com.Kari3600.me.TestGameClient.gui.ClientPane;
 import com.Kari3600.me.TestGameCommon.GameEngine;
 import com.Kari3600.me.TestGameCommon.Champions.Braum.Braum;
 import com.Kari3600.me.TestGameCommon.packets.Connection;
-import com.Kari3600.me.TestGameCommon.packets.JoinQueuePacket;
+import com.Kari3600.me.TestGameCommon.packets.QueueJoinPacket;
 import com.Kari3600.me.TestGameCommon.packets.Packet;
 import com.Kari3600.me.TestGameCommon.packets.QueueCountPacket;
-import com.Kari3600.me.TestGameCommon.packets.StartQueuePacket;
+import com.Kari3600.me.TestGameCommon.packets.QueueStartPacket;
 
 public class Main {
 
@@ -44,7 +44,7 @@ public class Main {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                JoinQueuePacket packet = new JoinQueuePacket(playerID);
+                QueueJoinPacket packet = new QueueJoinPacket(playerID);
                 Connection conn = new Connection(host);
                 conn.sendPacket(packet);
                 byte count = 0;
@@ -55,7 +55,7 @@ public class Main {
                         count = queueCountPacket.getCount();
                         clientRenderer.queueUpPlayers(count);
                         System.out.println("Current player count: "+count);
-                    } else if (p instanceof StartQueuePacket) {
+                    } else if (p instanceof QueueStartPacket) {
                         gameEngine = new GameEngineClient();
                         gameRenderer = new GameRenderer();
                         new Timer().scheduleAtFixedRate(gameEngine, 1000L/20, 1000L/20);
