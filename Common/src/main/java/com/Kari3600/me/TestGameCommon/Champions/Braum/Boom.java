@@ -39,7 +39,6 @@ public class Boom extends Projectile {
                     ((LivingEntity)entity).damage(300, Element.STONE, getChampion());
                 }
             }
-            
         };
     }
 

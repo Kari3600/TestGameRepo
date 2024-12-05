@@ -4,7 +4,7 @@ import java.net.ServerSocket;
 
 import com.Kari3600.me.TestGameCommon.packets.Connection;
 import com.Kari3600.me.TestGameCommon.packets.QueueJoinPacket;
-import com.Kari3600.me.TestGameCommon.packets.Packet;
+import com.Kari3600.me.TestGameCommon.packets.PacketManager;
 
 public class ServerSocketManager implements Runnable {
     private static ServerSocket server; 
@@ -19,7 +19,7 @@ public class ServerSocketManager implements Runnable {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Packet packet = conn.waitForPacket();
+                        PacketManager packet = conn.waitForPacket();
                         if (packet instanceof QueueJoinPacket) {
                             QueueJoinPacket joinQueuePacket = (QueueJoinPacket) packet;
                             System.out.println("Player with ID "+joinQueuePacket.getPlayerID()+" just joined");

@@ -47,7 +47,7 @@ public class ClientPane extends JLayeredPane {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.joinGame();
+                //Main.joinGame();
             }
         });
 
