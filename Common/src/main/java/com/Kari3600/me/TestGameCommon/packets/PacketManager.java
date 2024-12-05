@@ -6,9 +6,24 @@ import java.io.IOException;
 import com.Kari3600.me.TestGameAnnotations.packets.CreatePacket;
 
 @CreatePacket(name = "", parent = "", fields = {})
-@CreatePacket(name = "LoginRequest", parent = "", fields = {})
+@CreatePacket(name = "LoginRequest", parent = "", fields = {
+    @CreatePacket.Field(type = String.class, name = "username")
+})
+@CreatePacket(name = "LoginTask", parent = "", fields = {
+    @CreatePacket.Field(type = String.class, name = "salt")
+})
 @CreatePacket(name = "LoginResponse", parent = "", fields = {
-    @CreatePacket.Field(type = String.class, name = "encryptedPassword")
+    @CreatePacket.Field(type = String.class, name = "password")
+})
+@CreatePacket(name = "LoginResult", parent = "", fields = {
+    @CreatePacket.Field(type = Byte.class, name = "status")
+})
+@CreatePacket(name = "RegisterRequest", parent = "", fields = {
+    @CreatePacket.Field(type = String.class, name = "username"),
+    @CreatePacket.Field(type = String.class, name = "password")
+})
+@CreatePacket(name = "RegisterResult", parent = "", fields = {
+    @CreatePacket.Field(type = Byte.class, name = "status")
 })
 public abstract class PacketManager {
     public static Packet fromStream(ObjectInputStream ois) throws IOException, ClassNotFoundException {

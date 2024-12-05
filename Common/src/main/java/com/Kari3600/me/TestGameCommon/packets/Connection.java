@@ -65,5 +65,20 @@ public class Connection {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        /*
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Packet packet = PacketManager.fromStream(ois);
+                    } catch (ClassNotFoundException | IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+        */
     }
 }

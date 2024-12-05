@@ -5,10 +5,17 @@ import javax.swing.*;
 import com.Kari3600.me.TestGameClient.Main;
 import com.Kari3600.me.TestGameCommon.packets.Connection;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginRequest;
+import com.Kari3600.me.TestGameCommon.packets.PacketLoginResponse;
+import com.Kari3600.me.TestGameCommon.packets.PacketLoginResult;
+import com.Kari3600.me.TestGameCommon.packets.PacketLoginTask;
+import com.Kari3600.me.TestGameCommon.util.EncryptionUtil;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 public class LoginPanel extends JFrame {
 
@@ -61,8 +68,32 @@ public class LoginPanel extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 isLoggingIn = true;
                 Connection conn = new Connection(Main.getHost());
-                conn.sendPacketRequest(new PacketLoginRequest()).thenAcceptAsync(packet -> {
-                    
+                conn.sendPacketRequest(new PacketLoginRequest().setUsername(String.valueOf(usernameField.getText()))).thenAcceptAsync(packet -> {
+                    if (!(packet instanceof PacketLoginTask)) {
+                        System.out.println("Wrong packet");
+                        return;
+                    }
+                    String salt = ((PacketLoginTask) packet).getSalt();
+                    conn.sendPacketRequest(new PacketLoginResponse().setPassword(EncryptionUtil.encrypt(salt+EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword()))))).thenAccept(resultPacket -> {
+                        if (!(resultPacket instanceof PacketLoginResult)) {
+                            System.out.println("Wrong packet");
+                            return;
+                        }
+                        PacketLoginResult loginResult = (PacketLoginResult) resultPacket;
+                        switch (loginResult.getStatus()) {
+                            case 0:
+                            System.out.println("Login successful");
+                            break;
+
+                            case 1:
+                            JOptionPane.showMessageDialog(loginButton, "User does not exist.", "Login Error", JOptionPane.ERROR_MESSAGE);
+                            break;
+
+                            case 2:
+                            JOptionPane.showMessageDialog(loginButton, "Incorrect password.", "Login Error", JOptionPane.ERROR_MESSAGE);
+                            break;
+                        }
+                    });
                 });
             }
         });

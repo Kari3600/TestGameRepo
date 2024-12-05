@@ -26,6 +26,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 @AutoService(Processor.class)
@@ -119,8 +120,10 @@ public class PacketProcessor extends AbstractProcessor {
 
                 MethodSpec setter = MethodSpec.methodBuilder("set" + capitalize(fieldName))
                     .addModifiers(Modifier.PUBLIC)
+                    .returns(ClassName.bestGuess("Packet"+className))
                     .addParameter(fieldType, fieldName)
                     .addStatement("this.$L = $L", fieldName, fieldName)
+                    .addStatement("return this")
                     .build();
                 classBuilder.addMethod(setter);
             }
