@@ -8,11 +8,12 @@ import java.util.concurrent.ExecutionException;
 import com.Kari3600.me.TestGameCommon.packets.Connection;
 import com.Kari3600.me.TestGameCommon.packets.Packet;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginRequest;
-//import com.Kari3600.me.TestGameCommon.packets.QueueJoinPacket;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginResponse;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginResult;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginTask;
 import com.Kari3600.me.TestGameCommon.packets.PacketQueueJoin;
+import com.Kari3600.me.TestGameCommon.packets.PacketPing;
+import com.Kari3600.me.TestGameCommon.packets.PacketPong;
 import com.Kari3600.me.TestGameCommon.packets.PacketRegisterRequest;
 import com.Kari3600.me.TestGameCommon.packets.PacketRegisterResult;
 import com.Kari3600.me.TestGameCommon.util.EncryptionUtil;
@@ -25,7 +26,7 @@ public class ServerSocketManager implements Runnable {
         String salt = EncryptionUtil.encrypt(String.valueOf(System.currentTimeMillis()));
         CompletableFuture<Packet> packetFuture = CompletableFuture.supplyAsync(() -> {
             try {
-                return conn.sendPacketRequest(new PacketLoginTask().setSalt(salt)).get();
+                return conn.sendPacketTCPRequest(new PacketLoginTask().setSalt(salt)).get();
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 return null;
@@ -33,30 +34,27 @@ public class ServerSocketManager implements Runnable {
         });
         CompletableFuture<ResultSet> databaseFuture = DatabaseManager.executeQuery("SELECT `Password` FROM `Users` WHERE `Username` = ?",packet.getUsername());
         CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(packetFuture, databaseFuture);
-
-        combinedFuture.thenRun(() -> {
-            try {
-                Packet returnPacket = packetFuture.get();
-                ResultSet rs = databaseFuture.get();
-                if (!(returnPacket instanceof PacketLoginResponse)) {
-                    throw new Exception("Wrong packet");
-                }
-                PacketLoginResponse response = (PacketLoginResponse) returnPacket;
-                System.out.println("Received login response.");
-                if (!rs.next()) {
-                    conn.sendPacket(new PacketLoginResult().setStatus((byte) 1));
-                    return;
-                }
-                if (!response.getPassword().equals(EncryptionUtil.encrypt(salt+rs.getString("Password")))) {
-                    conn.sendPacket(new PacketLoginResult().setStatus((byte) 2));
-                    return;
-                }
-                conn.sendPacket(new PacketLoginResult().setStatus((byte) 0));
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            combinedFuture.join();
+            Packet returnPacket = packetFuture.get();
+            ResultSet rs = databaseFuture.get();
+            if (!(returnPacket instanceof PacketLoginResponse)) {
+                throw new Exception("Wrong packet");
             }
-            
-        });
+            PacketLoginResponse response = (PacketLoginResponse) returnPacket;
+            System.out.println("Received login response.");
+            if (!rs.next()) {
+                conn.sendPacketTCP(new PacketLoginResult().setStatus((byte) 1));
+                return;
+            }
+            if (!response.getPassword().equals(EncryptionUtil.encrypt(salt+rs.getString("Password")))) {
+                conn.sendPacketTCP(new PacketLoginResult().setStatus((byte) 2));
+                return;
+            }
+            conn.sendPacketTCP(new PacketLoginResult().setStatus((byte) 0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void register(Connection conn, PacketRegisterRequest packet) {
@@ -65,10 +63,10 @@ public class ServerSocketManager implements Runnable {
             try {
                 boolean success = databaseFuture.get()==1;
                 if (!success) {
-                    conn.sendPacket(new PacketRegisterResult().setStatus((byte) 1));
+                    conn.sendPacketTCP(new PacketRegisterResult().setStatus((byte) 1));
                     return;
                 }
-                conn.sendPacket(new PacketRegisterResult().setStatus((byte) 0));
+                conn.sendPacketTCP(new PacketRegisterResult().setStatus((byte) 0));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -85,7 +83,10 @@ public class ServerSocketManager implements Runnable {
                     @Override
                     public void run() {
                         while (true){
-                            Packet packet = conn.waitForPacket();
+                            Packet packet = conn.waitForPacketTCP();
+                            if (packet instanceof PacketPing) {
+                                conn.sendPacketTCP(new PacketPong().setID(((PacketPing) packet).getID()));
+                            }
                             if (packet instanceof PacketLoginRequest) {
                                 login(conn, (PacketLoginRequest) packet);
                             }

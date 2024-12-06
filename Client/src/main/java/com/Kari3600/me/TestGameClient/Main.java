@@ -72,6 +72,8 @@ public class Main {
             System.out.println("Failed to connect to the server.");
             conn = null;
         }
+        
+        conn.checkConnection();
 
         SwingUtilities.invokeLater(LoginPanel::new);
 

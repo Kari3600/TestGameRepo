@@ -77,7 +77,7 @@ class RegisterPanel extends JFrame {
                     return;
                 }
                 Connection conn = Main.getConnection();
-                conn.sendPacketRequest(new PacketRegisterRequest().setUsername(String.valueOf(usernameField.getText())).setPassword(EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword())))).thenAccept(resultPacket -> {
+                conn.sendPacketTCPRequest(new PacketRegisterRequest().setUsername(String.valueOf(usernameField.getText())).setPassword(EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword())))).thenAccept(resultPacket -> {
                     if (!(resultPacket instanceof PacketRegisterResult)) {
                         System.out.println("Wrong packet");
                         return;

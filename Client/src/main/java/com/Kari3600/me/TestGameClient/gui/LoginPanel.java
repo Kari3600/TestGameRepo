@@ -68,13 +68,13 @@ public class LoginPanel extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 isLoggingIn = true;
                 Connection conn = Main.getConnection();
-                conn.sendPacketRequest(new PacketLoginRequest().setUsername(String.valueOf(usernameField.getText()))).thenAcceptAsync(packet -> {
+                conn.sendPacketTCPRequest(new PacketLoginRequest().setUsername(String.valueOf(usernameField.getText()))).thenAcceptAsync(packet -> {
                     if (!(packet instanceof PacketLoginTask)) {
                         System.out.println("Wrong packet");
                         return;
                     }
                     String salt = ((PacketLoginTask) packet).getSalt();
-                    conn.sendPacketRequest(new PacketLoginResponse().setPassword(EncryptionUtil.encrypt(salt+EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword()))))).thenAccept(resultPacket -> {
+                    conn.sendPacketTCPRequest(new PacketLoginResponse().setPassword(EncryptionUtil.encrypt(salt+EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword()))))).thenAccept(resultPacket -> {
                         if (!(resultPacket instanceof PacketLoginResult)) {
                             System.out.println("Wrong packet");
                             return;

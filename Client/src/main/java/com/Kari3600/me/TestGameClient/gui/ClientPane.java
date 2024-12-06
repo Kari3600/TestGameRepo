@@ -57,10 +57,10 @@ public class ClientPane extends JLayeredPane {
                     public void run() {
                         PacketQueueJoin packet = new PacketQueueJoin();
                         System.out.println("Packet sent");
-                        Main.getConnection().sendPacket(packet);
+                        Main.getConnection().sendPacketTCP(packet);
                         byte count = 0;
                         while (true) {
-                            Packet p = Main.getConnection().waitForPacket();
+                            Packet p = Main.getConnection().waitForPacketTCP();
                             if (p instanceof PacketQueueCount) {
                                 PacketQueueCount queueCountPacket = (PacketQueueCount) p;
                                 count = queueCountPacket.getCount();
