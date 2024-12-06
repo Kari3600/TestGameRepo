@@ -1,11 +1,15 @@
 package com.Kari3600.me.TestGameClient;
 
+import java.util.Properties;
 import java.util.Timer;
 import java.util.UUID;
 
 import javax.swing.SwingUtilities;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetAddress;
 
 import com.Kari3600.me.TestGameClient.gui.ClientPane;
@@ -17,7 +21,7 @@ import com.Kari3600.me.TestGameCommon.packets.PacketManager;
 
 public class Main {
 
-    private static InetAddress host;
+    private static Connection conn;
     private static GameEngineClient gameEngine;
     private static GameRenderer gameRenderer;
     private static ClientPane clientRenderer;
@@ -35,8 +39,8 @@ public class Main {
         return playerID;
     }
 
-    public static InetAddress getHost() {
-        return host;
+    public static Connection getConnection() {
+        return conn;
     }
 
     public static void printMatrix(float[] matrix) {
@@ -45,45 +49,31 @@ public class Main {
         }
     }
 
-    // public static void joinGame() {
-    //     new Thread(new Runnable() {
-    //         @Override
-    //         public void run() {
-    //             QueueJoinPacket packet = new QueueJoinPacket(playerID);
-    //             Connection conn = new Connection(host);
-    //             conn.sendPacket(packet);
-    //             byte count = 0;
-    //             while (true) {
-    //                 PacketManager p = conn.waitForPacket();
-    //                 if (p instanceof QueueCountPacket) {
-    //                     QueueCountPacket queueCountPacket = (QueueCountPacket) p;
-    //                     count = queueCountPacket.getCount();
-    //                     clientRenderer.queueUpPlayers(count);
-    //                     System.out.println("Current player count: "+count);
-    //                 } else if (p instanceof QueueStartPacket) {
-    //                     gameEngine = new GameEngineClient();
-    //                     gameRenderer = new GameRenderer();
-    //                     new Timer().scheduleAtFixedRate(gameEngine, 1000L/20, 1000L/20);
-    //                 } else {
-    //                     System.err.println("Wrong packet received");
-    //                     break;
-    //                 }
-                    
-    //             }
-    //         }
-    //     }).start();
-    // }
+    public static void launchGame() {
+        gameEngine = new GameEngineClient();
+        gameRenderer = new GameRenderer();
+        new Timer().scheduleAtFixedRate(gameEngine, 1000L/20, 1000L/20);
+    }
 
     public static void main(String[] args) {
-
-        SwingUtilities.invokeLater(LoginPanel::new);
+        Properties properties = new Properties();
+        try (FileInputStream fis = new FileInputStream("client.config")) {
+            properties.load(fis);
+        } catch (FileNotFoundException ex) {
+            System.out.println("Missing 'client.config' file.");
+        } catch (IOException ex) {
+            System.out.println("Failed to load configuration.");
+        }
 
         try {
-            host = InetAddress.getLocalHost();
+            conn = new Connection(InetAddress.getByName(properties.getProperty("host", "localhost")));
         } catch (Exception e) {
-            host = null;
+            // TODO try to reconnect
+            System.out.println("Failed to connect to the server.");
+            conn = null;
         }
-        //clientRenderer = new ClientPane();
+
+        SwingUtilities.invokeLater(LoginPanel::new);
 
         //System.out.println(Path.fromMapCoordinates(Path.toMapCoordinated(new Vector2(4.0F,3.0F))).toString());
         

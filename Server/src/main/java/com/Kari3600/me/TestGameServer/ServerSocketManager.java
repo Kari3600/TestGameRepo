@@ -12,6 +12,7 @@ import com.Kari3600.me.TestGameCommon.packets.PacketLoginRequest;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginResponse;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginResult;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginTask;
+import com.Kari3600.me.TestGameCommon.packets.PacketQueueJoin;
 import com.Kari3600.me.TestGameCommon.packets.PacketRegisterRequest;
 import com.Kari3600.me.TestGameCommon.packets.PacketRegisterResult;
 import com.Kari3600.me.TestGameCommon.util.EncryptionUtil;
@@ -83,13 +84,11 @@ public class ServerSocketManager implements Runnable {
                                 
                             });
                         }
-                        /*
-                        if (packet instanceof QueueJoinPacket) {
-                            QueueJoinPacket joinQueuePacket = (QueueJoinPacket) packet;
-                            System.out.println("Player with ID "+joinQueuePacket.getPlayerID()+" just joined");
+                        if (packet instanceof PacketQueueJoin) {
+                            PacketQueueJoin joinQueuePacket = (PacketQueueJoin) packet;
+                            System.out.println("Player joined");
                             Queue.queuePlayer(conn);
                         }
-                        */
                     }
                 }).start(); 
             }

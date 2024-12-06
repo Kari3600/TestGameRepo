@@ -99,8 +99,9 @@ public class PacketProcessor extends AbstractProcessor {
 
             for (CreatePacket.Field field : createPacket.fields()) {
                 TypeMirror fieldTypeMirror = getFieldType(field);
-                String fieldTypeName = fieldTypeMirror.toString();
-                ClassName fieldType = ClassName.bestGuess(fieldTypeName);
+                //String fieldTypeName = fieldTypeMirror.toString();
+                TypeName fieldType = ClassName.get(fieldTypeMirror);
+                //ClassName fieldType = ClassName.bestGuess(fieldTypeName);
 
                 String fieldName = field.name();
                 System.out.println("Processing field: " + fieldName + " of type " + fieldType);

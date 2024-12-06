@@ -72,7 +72,7 @@ class RegisterPanel extends JFrame {
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Connection conn = new Connection(Main.getHost());
+                Connection conn = Main.getConnection();
                 conn.sendPacketRequest(new PacketRegisterRequest().setUsername(String.valueOf(usernameField.getText())).setPassword(EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword())))).thenAccept(resultPacket -> {
                     if (!(resultPacket instanceof PacketRegisterResult)) {
                         System.out.println("Wrong packet");

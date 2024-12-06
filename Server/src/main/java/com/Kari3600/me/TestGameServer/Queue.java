@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import com.Kari3600.me.TestGameCommon.packets.Connection;
-import com.Kari3600.me.TestGameCommon.packets.QueueCountPacket;
-import com.Kari3600.me.TestGameCommon.packets.QueueStartPacket;
+import com.Kari3600.me.TestGameCommon.packets.PacketQueueCount;
+import com.Kari3600.me.TestGameCommon.packets.PacketQueueStart;
 
 public class Queue {
     private static byte maxPlayers = 2;
@@ -25,14 +25,14 @@ public class Queue {
 
     private void start() {
         for (Connection pl : players) {
-            pl.sendPacket(new QueueStartPacket());
+            pl.sendPacket(new PacketQueueStart());
         }
     }
 
     private boolean add(Connection player) {
         players.add(player);
         for (Connection pl : players) {
-            pl.sendPacket(new QueueCountPacket((byte) players.size()));
+            pl.sendPacket(new PacketQueueCount().setCount((byte) players.size()));
         }
         if (players.size() == maxPlayers) return true;
         return false;

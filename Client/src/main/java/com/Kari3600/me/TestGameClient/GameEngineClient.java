@@ -1,6 +1,5 @@
 package com.Kari3600.me.TestGameClient;
 
-import java.net.InetAddress;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.TimerTask;
@@ -20,7 +19,6 @@ public class GameEngineClient extends TimerTask implements GameEngine {
     private final Set<Entity> entities = new HashSet<Entity>();
     private long tick = 0;
     private long lastTick = 0;
-    private final UDPConnection conn;
 
     public void addEntity(Entity entity) {
         entities.add(entity);
@@ -57,8 +55,8 @@ public class GameEngineClient extends TimerTask implements GameEngine {
         //System.out.println(String.format("New player position: %f, %f, %f",player.getPosition().x,player.getPosition().y,player.getPosition().z));
     }
 
-    public GameEngineClient(InetAddress host) {
-        conn = new UDPConnection(host);
+    public GameEngineClient() {
+
     }
 
 }

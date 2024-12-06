@@ -5,6 +5,10 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 
 import com.Kari3600.me.TestGameClient.Main;
+import com.Kari3600.me.TestGameCommon.packets.Packet;
+import com.Kari3600.me.TestGameCommon.packets.PacketQueueCount;
+import com.Kari3600.me.TestGameCommon.packets.PacketQueueJoin;
+import com.Kari3600.me.TestGameCommon.packets.PacketQueueStart;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -47,7 +51,29 @@ public class ClientPane extends JLayeredPane {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //Main.joinGame();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        PacketQueueJoin packet = new PacketQueueJoin();
+                        Main.getConnection().sendPacket(packet);
+                        byte count = 0;
+                        while (true) {
+                            Packet p = Main.getConnection().waitForPacket();
+                            if (p instanceof PacketQueueCount) {
+                                PacketQueueCount queueCountPacket = (PacketQueueCount) p;
+                                count = queueCountPacket.getCount();
+                                queueUpPlayers(count);
+                                System.out.println("Current player count: "+count);
+                            } else if (p instanceof PacketQueueStart) {
+                                Main.launchGame();
+                                
+                            } else {
+                                System.err.println("Wrong packet received");
+                                break;
+                            }    
+                        }
+                    }
+                }).start();
             }
         });
 

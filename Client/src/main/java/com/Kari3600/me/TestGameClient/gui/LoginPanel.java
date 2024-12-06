@@ -67,7 +67,7 @@ public class LoginPanel extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 isLoggingIn = true;
-                Connection conn = new Connection(Main.getHost());
+                Connection conn = Main.getConnection();
                 conn.sendPacketRequest(new PacketLoginRequest().setUsername(String.valueOf(usernameField.getText()))).thenAcceptAsync(packet -> {
                     if (!(packet instanceof PacketLoginTask)) {
                         System.out.println("Wrong packet");
