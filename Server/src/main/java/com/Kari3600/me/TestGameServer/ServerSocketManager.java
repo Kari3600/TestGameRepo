@@ -42,6 +42,7 @@ public class ServerSocketManager implements Runnable {
                     throw new Exception("Wrong packet");
                 }
                 PacketLoginResponse response = (PacketLoginResponse) returnPacket;
+                System.out.println("Received login response.");
                 if (!rs.next()) {
                     conn.sendPacket(new PacketLoginResult().setStatus((byte) 1));
                     return;
@@ -84,9 +85,7 @@ public class ServerSocketManager implements Runnable {
                     @Override
                     public void run() {
                         while (true){
-                            System.out.println("Waiting for packet on IP: "+conn.getHostAddress());
                             Packet packet = conn.waitForPacket();
-                            System.out.println("Received packet "+packet.getClass()+" on IP: "+conn.getHostAddress());
                             if (packet instanceof PacketLoginRequest) {
                                 login(conn, (PacketLoginRequest) packet);
                             }

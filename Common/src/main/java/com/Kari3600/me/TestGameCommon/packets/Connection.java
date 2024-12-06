@@ -27,9 +27,11 @@ public class Connection {
     }
 
     public Packet waitForPacket() {
-        System.out.println("Waiting for packet on thread "+Thread.currentThread().getName());
         try {
-            return PacketManager.fromStream(ois);
+            System.out.println("Waiting for packet on IP: "+getHostAddress());
+            Packet returnPacket = PacketManager.fromStream(ois);
+            System.out.println("Received packet "+returnPacket.getClass()+" on IP: "+getHostAddress());
+            return returnPacket;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -38,6 +40,7 @@ public class Connection {
 
     public void sendPacket(Packet packet) {
         try {
+            System.out.println("Sending packet "+packet.getClass()+" on IP: "+getHostAddress());
             packet.write(oos);
             oos.flush();
         } catch (Exception e) {
@@ -48,9 +51,13 @@ public class Connection {
     public CompletableFuture<Packet> sendPacketRequest(Packet packet) {
         return CompletableFuture.supplyAsync(() -> {
             try {
+                System.out.println("Sending packet "+packet.getClass()+" on IP: "+getHostAddress());
                 packet.write(oos);
                 oos.flush();
-                return PacketManager.fromStream(ois);
+                System.out.println("Waiting for packet on IP: "+getHostAddress());
+                Packet returnPacket = PacketManager.fromStream(ois);
+                System.out.println("Received packet "+returnPacket.getClass()+" on IP: "+getHostAddress());
+                return returnPacket;
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
