@@ -82,7 +82,8 @@ public class LoginPanel extends JFrame {
                         PacketLoginResult loginResult = (PacketLoginResult) resultPacket;
                         switch (loginResult.getStatus()) {
                             case 0:
-                            System.out.println("Login successful");
+                            new ClientPane();
+                            dispose();
                             break;
 
                             case 1:
