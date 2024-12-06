@@ -13,6 +13,10 @@ public class Connection {
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
 
+    public InetAddress getHostAddress() {
+        return socket.getInetAddress();
+    }
+
     private static Socket getSocket(InetAddress host) {
         try {
             return new Socket(host.getHostName(), 2137);
@@ -35,6 +39,7 @@ public class Connection {
     public void sendPacket(Packet packet) {
         try {
             packet.write(oos);
+            oos.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,6 +49,7 @@ public class Connection {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 packet.write(oos);
+                oos.flush();
                 return PacketManager.fromStream(ois);
             } catch (Exception e) {
                 e.printStackTrace();

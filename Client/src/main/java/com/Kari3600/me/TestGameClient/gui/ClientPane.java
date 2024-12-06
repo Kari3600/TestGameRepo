@@ -51,10 +51,12 @@ public class ClientPane extends JLayeredPane {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("Clicked");
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         PacketQueueJoin packet = new PacketQueueJoin();
+                        System.out.println("Packet sent");
                         Main.getConnection().sendPacket(packet);
                         byte count = 0;
                         while (true) {
