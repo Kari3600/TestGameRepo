@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>annotations</module>
         <module>common</module>
         <module>client</module>
         <module>server</module>
@@ -17,6 +18,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.16.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

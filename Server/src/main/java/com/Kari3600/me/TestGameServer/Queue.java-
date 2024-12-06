@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.Kari3600.me.TestGameCommon.packets.Connection;
 import com.Kari3600.me.TestGameCommon.packets.QueueCountPacket;
-import com.Kari3600.me.TestGameCommon.packets.StartQueuePacket;
+import com.Kari3600.me.TestGameCommon.packets.QueueStartPacket;
 
 public class Queue {
     private static byte maxPlayers = 2;
@@ -25,7 +25,7 @@ public class Queue {
 
     private void start() {
         for (Connection pl : players) {
-            pl.sendPacket(new StartQueuePacket());
+            pl.sendPacket(new QueueStartPacket());
         }
     }
 
