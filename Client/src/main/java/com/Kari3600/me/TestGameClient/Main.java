@@ -56,7 +56,7 @@ public class Main {
                         clientRenderer.queueUpPlayers(count);
                         System.out.println("Current player count: "+count);
                     } else if (p instanceof StartQueuePacket) {
-                        gameEngine = new GameEngineClient();
+                        gameEngine = new GameEngineClient(host);
                         gameRenderer = new GameRenderer();
                         new Timer().scheduleAtFixedRate(gameEngine, 1000L/20, 1000L/20);
                     } else {
