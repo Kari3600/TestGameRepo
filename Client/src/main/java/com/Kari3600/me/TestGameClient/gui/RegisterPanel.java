@@ -3,7 +3,7 @@ package com.Kari3600.me.TestGameClient.gui;
 import javax.swing.*;
 
 import com.Kari3600.me.TestGameClient.Main;
-import com.Kari3600.me.TestGameCommon.packets.Connection;
+import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
 import com.Kari3600.me.TestGameCommon.packets.PacketRegisterRequest;
 import com.Kari3600.me.TestGameCommon.packets.PacketRegisterResult;
 import com.Kari3600.me.TestGameCommon.util.EncryptionUtil;
@@ -76,8 +76,8 @@ class RegisterPanel extends JFrame {
                     JOptionPane.showMessageDialog(registerButton, "Passwords must match.", "Register Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                Connection conn = Main.getConnection();
-                conn.sendPacketTCPRequest(new PacketRegisterRequest().setUsername(String.valueOf(usernameField.getText())).setPassword(EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword())))).thenAccept(resultPacket -> {
+                TCPConnection conn = Main.getConnection();
+                conn.sendPacketRequest(new PacketRegisterRequest().setUsername(String.valueOf(usernameField.getText())).setPassword(EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword())))).thenAccept(resultPacket -> {
                     if (!(resultPacket instanceof PacketRegisterResult)) {
                         System.out.println("Wrong packet");
                         return;

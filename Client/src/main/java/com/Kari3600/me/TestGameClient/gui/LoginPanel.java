@@ -3,7 +3,7 @@ package com.Kari3600.me.TestGameClient.gui;
 import javax.swing.*;
 
 import com.Kari3600.me.TestGameClient.Main;
-import com.Kari3600.me.TestGameCommon.packets.Connection;
+import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginRequest;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginResponse;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginResult;
@@ -67,14 +67,14 @@ public class LoginPanel extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 isLoggingIn = true;
-                Connection conn = Main.getConnection();
-                conn.sendPacketTCPRequest(new PacketLoginRequest().setUsername(String.valueOf(usernameField.getText()))).thenAcceptAsync(packet -> {
+                TCPConnection conn = Main.getConnection();
+                conn.sendPacketRequest(new PacketLoginRequest().setUsername(String.valueOf(usernameField.getText()))).thenAcceptAsync(packet -> {
                     if (!(packet instanceof PacketLoginTask)) {
                         System.out.println("Wrong packet");
                         return;
                     }
                     String salt = ((PacketLoginTask) packet).getSalt();
-                    conn.sendPacketTCPRequest(new PacketLoginResponse().setPassword(EncryptionUtil.encrypt(salt+EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword()))))).thenAccept(resultPacket -> {
+                    conn.sendPacketRequest(new PacketLoginResponse().setPassword(EncryptionUtil.encrypt(salt+EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword()))))).thenAccept(resultPacket -> {
                         if (!(resultPacket instanceof PacketLoginResult)) {
                             System.out.println("Wrong packet");
                             return;

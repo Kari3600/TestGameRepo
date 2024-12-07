@@ -5,7 +5,7 @@ import java.awt.event.MouseListener;
 
 import com.Kari3600.me.TestGameCommon.GameEngine;
 import com.Kari3600.me.TestGameCommon.Path;
-import com.Kari3600.me.TestGameCommon.packets.Connection;
+import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
 //import com.Kari3600.me.TestGameCommon.packets.PacketEntityAdd;
 import com.Kari3600.me.TestGameCommon.packets.PacketEntityPath;
 import com.Kari3600.me.TestGameCommon.util.Vector2;

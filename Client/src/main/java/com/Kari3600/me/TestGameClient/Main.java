@@ -16,12 +16,13 @@ import com.Kari3600.me.TestGameClient.gui.ClientPane;
 import com.Kari3600.me.TestGameClient.gui.LoginPanel;
 import com.Kari3600.me.TestGameCommon.GameEngine;
 import com.Kari3600.me.TestGameCommon.Champions.Braum.Braum;
-import com.Kari3600.me.TestGameCommon.packets.Connection;
+import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
+import com.Kari3600.me.TestGameCommon.packets.UDPConnection;
 import com.Kari3600.me.TestGameCommon.packets.PacketManager;
 
 public class Main {
 
-    private static Connection conn;
+    private static TCPConnection conn;
     private static GameEngineClient gameEngine;
     private static GameRenderer gameRenderer;
     private static ClientPane clientRenderer;
@@ -39,7 +40,7 @@ public class Main {
         return playerID;
     }
 
-    public static Connection getConnection() {
+    public static TCPConnection getConnection() {
         return conn;
     }
 
@@ -66,14 +67,14 @@ public class Main {
         }
 
         try {
-            conn = new Connection(InetAddress.getByName(properties.getProperty("host", "localhost")));
+            conn = new TCPConnection(InetAddress.getByName(properties.getProperty("host", "localhost")));
         } catch (Exception e) {
             // TODO try to reconnect
             System.out.println("Failed to connect to the server.");
             conn = null;
         }
-        
-        conn.checkConnection();
+
+        new UDPConnection().checkConnection(conn.getHostAddress());
 
         SwingUtilities.invokeLater(LoginPanel::new);
 
