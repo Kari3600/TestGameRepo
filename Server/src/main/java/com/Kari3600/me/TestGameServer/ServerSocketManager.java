@@ -1,11 +1,14 @@
 package com.Kari3600.me.TestGameServer;
 
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.sql.ResultSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
+import com.Kari3600.me.TestGameCommon.packets.UDPConnection;
+import com.Kari3600.me.TestGameCommon.packets.UDPPacketListener;
 import com.Kari3600.me.TestGameCommon.packets.Packet;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginRequest;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginResponse;
@@ -18,7 +21,7 @@ import com.Kari3600.me.TestGameCommon.packets.PacketRegisterRequest;
 import com.Kari3600.me.TestGameCommon.packets.PacketRegisterResult;
 import com.Kari3600.me.TestGameCommon.util.EncryptionUtil;
 
-public class ServerSocketManager implements Runnable {
+public class ServerSocketManager implements Runnable, UDPPacketListener {
     private static ServerSocket server; 
     private static int port = 2137;
 
@@ -84,9 +87,6 @@ public class ServerSocketManager implements Runnable {
                     public void run() {
                         while (true){
                             Packet packet = conn.waitForPacket();
-                            if (packet instanceof PacketPing) {
-                                conn.sendPacket(new PacketPong().setID(((PacketPing) packet).getID()));
-                            }
                             if (packet instanceof PacketLoginRequest) {
                                 login(conn, (PacketLoginRequest) packet);
                             }
@@ -106,6 +106,13 @@ public class ServerSocketManager implements Runnable {
             //server.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onPacket(Packet packet, InetAddress address) {
+        if (packet instanceof PacketPing) {
+            UDPConnection.getInstance().sendPacket(new PacketPong().setID(((PacketPing) packet).getID()), address);
         }
     }
 }

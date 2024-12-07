@@ -4,6 +4,7 @@ import java.util.Timer;
 
 import com.Kari3600.me.TestGameCommon.GameEngine;
 import com.Kari3600.me.TestGameCommon.Champions.Braum.Braum;
+import com.Kari3600.me.TestGameCommon.packets.UDPConnection;
 
 public class Main {
 
@@ -25,6 +26,7 @@ public class Main {
         //gameEngine.setPlayerCharacter(new Braum());
         //gameEngine.registerEntity(new Braum());
         //new Timer().scheduleAtFixedRate(gameEngine, 1000L/20, 1000L/20);
+        new UDPConnection();
         new Thread(new ServerSocketManager()).start();
         
         System.out.println("Hello World");

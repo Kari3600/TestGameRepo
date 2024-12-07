@@ -2,15 +2,9 @@ package com.Kari3600.me.TestGameCommon.packets;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,7 +17,7 @@ import java.net.DatagramSocket;
 public class UDPConnection {
 
     private DatagramSocket socket;
-    private Multimap<InetAddress,UDPPacketListener> listeners = ArrayListMultimap.create();
+    private List<UDPPacketListener> listeners = new ArrayList<>();
 
     private static UDPConnection instance;
 
@@ -49,7 +43,7 @@ public class UDPConnection {
 
         UDPPacketListener listener = new UDPPacketListener() {
             @Override
-            public void onPacket(Packet p) {
+            public void onPacket(Packet p, InetAddress address) {
                 if (!(p instanceof PacketPong)) {
                     return;
                 }
@@ -60,7 +54,7 @@ public class UDPConnection {
             }
         };
 
-        register(listener, List.of(address));
+        register(listener);
 
         for (int n=0;n<256;++n) {
             sendPings[n] = System.currentTimeMillis();
@@ -86,16 +80,12 @@ public class UDPConnection {
         System.out.println("95%tile: "+pings.get(250) );
     }
 
-    public void register(UDPPacketListener listener, List<InetAddress> addresses) {
-        for (InetAddress address : addresses) {
-            listeners.put(address,listener);
-        }
+    public void register(UDPPacketListener listener) {
+        listeners.add(listener);
     }
 
     public void unregister(UDPPacketListener listener) {
-        for (InetAddress address : listeners.keySet()) {
-            listeners.remove(address, listener);
-        }
+        listeners.remove(listener);
     }
 
     public void sendPacket(Packet packet,InetAddress... addresses) {
@@ -128,8 +118,8 @@ public class UDPConnection {
                 DatagramPacket packet = new DatagramPacket(fixedBuffer, fixedBuffer.length);
                 socket.receive(packet);
                 Packet returnPacket = PacketManager.fromStream(new ObjectInputStream(new ByteArrayInputStream(fixedBuffer)));
-                for (UDPPacketListener listener : listeners.get(packet.getAddress())) {
-                    listener.onPacket(returnPacket);
+                for (UDPPacketListener listener : listeners) {
+                    listener.onPacket(returnPacket,packet.getAddress());
                 }
             } catch (IOException e) {
                 System.exit(1);
