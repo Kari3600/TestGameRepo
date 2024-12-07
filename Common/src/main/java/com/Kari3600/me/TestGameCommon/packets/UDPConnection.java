@@ -111,22 +111,27 @@ public class UDPConnection {
     public UDPConnection() {
         instance = this;
         socket = getSocket();
-        while (true) {
-            try {
-                //System.out.println("Waiting for packet on IP: "+getHostAddress());
-                byte[] fixedBuffer = new byte[65535];
-                DatagramPacket packet = new DatagramPacket(fixedBuffer, fixedBuffer.length);
-                socket.receive(packet);
-                Packet returnPacket = PacketManager.fromStream(new ObjectInputStream(new ByteArrayInputStream(fixedBuffer)));
-                for (UDPPacketListener listener : listeners) {
-                    listener.onPacket(returnPacket,packet.getAddress());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        //System.out.println("Waiting for packet on IP: "+getHostAddress());
+                        byte[] fixedBuffer = new byte[65535];
+                        DatagramPacket packet = new DatagramPacket(fixedBuffer, fixedBuffer.length);
+                        socket.receive(packet);
+                        Packet returnPacket = PacketManager.fromStream(new ObjectInputStream(new ByteArrayInputStream(fixedBuffer)));
+                        for (UDPPacketListener listener : listeners) {
+                            listener.onPacket(returnPacket,packet.getAddress());
+                        }
+                    } catch (IOException e) {
+                        System.exit(1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (IOException e) {
-                System.exit(1);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
+        }).start();
     }
 
 }
