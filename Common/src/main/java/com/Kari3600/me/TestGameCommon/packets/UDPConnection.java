@@ -21,6 +21,13 @@ public class UDPConnection {
 
     private static UDPConnection instance;
 
+    public static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for(byte b: bytes)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
+    }
+
     private static DatagramSocket getSocket() {
         try {
             return new DatagramSocket(2138);
@@ -58,7 +65,7 @@ public class UDPConnection {
 
         for (int n=0;n<256;++n) {
             sendPings[n] = System.currentTimeMillis();
-            sendPacket(new PacketPing().setID((byte) (n+Byte.MIN_VALUE)));
+            sendPacket(new PacketPing().setID((byte) (n+Byte.MIN_VALUE)),address);
         }
 
         try {
@@ -90,7 +97,7 @@ public class UDPConnection {
 
     public void sendPacket(Packet packet,InetAddress... addresses) {
         try {
-            System.out.println("UDP Socket Address: " + socket.getLocalAddress() + ", Port: " + socket.getLocalPort());
+            //System.out.println("UDP Socket Address: " + socket.getLocalAddress() + ", Port: " + socket.getLocalPort());
             //System.out.println("Sending packet "+packet.getClass()+" on IP: "+getHostAddress());
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             packet.write(new ObjectOutputStream(buffer));
@@ -99,8 +106,9 @@ public class UDPConnection {
             if (fixedBuffer == null || fixedBuffer.length == 0) {
                 throw new IllegalStateException("Buffer is null or empty.");
             }
-            System.out.println(fixedBuffer);
+            //System.out.println(bytesToHex(fixedBuffer));
             for (InetAddress address : addresses) {
+                //System.out.println("Sending packet to socket on "+address);
                 socket.send(new DatagramPacket(fixedBuffer, fixedBuffer.length, address, 2138));
             }
         } catch (Exception e) {
@@ -116,7 +124,7 @@ public class UDPConnection {
             public void run() {
                 while (true) {
                     try {
-                        //System.out.println("Waiting for packet on IP: "+getHostAddress());
+                        //System.out.println("Waiting for UDP packet");
                         byte[] fixedBuffer = new byte[65535];
                         DatagramPacket packet = new DatagramPacket(fixedBuffer, fixedBuffer.length);
                         socket.receive(packet);

@@ -26,8 +26,9 @@ public class Main {
         //gameEngine.setPlayerCharacter(new Braum());
         //gameEngine.registerEntity(new Braum());
         //new Timer().scheduleAtFixedRate(gameEngine, 1000L/20, 1000L/20);
-        new UDPConnection();
-        new Thread(new ServerSocketManager()).start();
+        ServerSocketManager ssm = new ServerSocketManager();
+        new UDPConnection().register(ssm);
+        new Thread(ssm).start();
         
         System.out.println("Hello World");
     }
