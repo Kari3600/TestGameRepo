@@ -52,7 +52,7 @@ public class Main {
     }
 
     public static void launchGame() {
-        gameEngine = new GameEngineClient();
+        gameEngine = new GameEngineClient(conn.getHostAddress());
         gameRenderer = new GameRenderer();
         new Timer().scheduleAtFixedRate(gameEngine, 1000L/20, 1000L/20);
     }
@@ -74,8 +74,6 @@ public class Main {
             System.out.println("Failed to connect to the server.");
             conn = null;
         }
-
-        new UDPConnection().checkConnection(conn.getHostAddress());
 
         SwingUtilities.invokeLater(LoginPanel::new);
 

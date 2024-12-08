@@ -41,7 +41,7 @@ public class UDPConnection {
         return instance;
     }
 
-    public void checkConnection(InetAddress address) {
+    public long checkConnection(InetAddress address) {
         long totalTime = System.currentTimeMillis();
         long[] sendPings = new long[256];
         long[] receivePings = new long[256];
@@ -85,6 +85,7 @@ public class UDPConnection {
         pings.sort(null);
         System.out.println("5%tile: "+pings.get(5));
         System.out.println("95%tile: "+pings.get(250) );
+        return pings.get(250)-pings.get(5);
     }
 
     public void register(UDPPacketListener listener) {

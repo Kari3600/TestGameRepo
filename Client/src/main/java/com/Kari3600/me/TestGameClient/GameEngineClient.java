@@ -1,10 +1,14 @@
 package com.Kari3600.me.TestGameClient;
 
 import java.util.Set;
+import java.net.InetAddress;
 import java.util.HashSet;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.Kari3600.me.TestGameCommon.Champions.Champion;
+import com.Kari3600.me.TestGameCommon.packets.Packet;
 import com.Kari3600.me.TestGameCommon.packets.UDPConnection;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 import com.jogamp.opengl.util.texture.spi.awt.IIOTextureProvider;
@@ -13,6 +17,8 @@ import com.Kari3600.me.TestGameCommon.GameEngine;
 import com.Kari3600.me.TestGameCommon.Path;
 
 public class GameEngineClient extends TimerTask implements GameEngine {
+
+    private final ConcurrentHashMap<Long,ConcurrentLinkedQueue<Packet>> buffer = new ConcurrentHashMap<>();
 
     private final float TPS = 20;
     private Champion character;
@@ -55,8 +61,10 @@ public class GameEngineClient extends TimerTask implements GameEngine {
         //System.out.println(String.format("New player position: %f, %f, %f",player.getPosition().x,player.getPosition().y,player.getPosition().z));
     }
 
-    public GameEngineClient() {
-
+    public GameEngineClient(InetAddress host) {
+        int delta90 = (int) UDPConnection.getInstance().checkConnection(host);
+        int bufferSize = (int) (delta90*TPS/1000)+1;
+        System.out.println("Buffer size: "+bufferSize);
     }
 
 }
