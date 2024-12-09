@@ -3,6 +3,7 @@ package com.Kari3600.me.TestGameClient.util;
 import java.util.HashSet;
 
 import com.Kari3600.me.TestGameClient.Main;
+import com.Kari3600.me.TestGameCommon.util.Transposing;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -27,8 +28,7 @@ public class Object3D {
     private final HashSet<Triangle> triangles;
     private Texture texture;
     private final TextureInputStream textureIS;
-    private float[] Matrix = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
-    
+    private Transposing transposer;
 
     public Object3D movePivot(Vector3 position) {
         HashSet<Vertex> vertices = new HashSet<Vertex>();
@@ -74,7 +74,7 @@ public class Object3D {
 
     public void render(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
-        gl.glMultMatrixf(Matrix,0);
+        gl.glMultMatrixf(transposer.getMatrix().getValues(),0);
         if (texture != null) {
             texture.enable(gl);
             texture.bind(gl);
@@ -94,6 +94,10 @@ public class Object3D {
             }
         }
         gl.glEnd();
+    }
+
+    public void setTransposer(Transposing t) {
+        this.transposer = t;
     }
 
     public Object3D clone() {

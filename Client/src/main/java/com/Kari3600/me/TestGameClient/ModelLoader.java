@@ -1,7 +1,6 @@
 package com.Kari3600.me.TestGameClient;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -105,7 +104,7 @@ public class ModelLoader {
         try {
             HashSet<Triangle> triangles = new HashSet<Triangle>();
             // Specify the path to your .glb file
-            File glbFile = new File("Client/src/main/resources/"+name+".glb");
+            File glbFile = new File(ModelLoader.class.getClassLoader().getResource("models/entity/"+name+".glb").toURI());
 
             // Load the glTF model
             InputStream stream = glbFile.toURI().toURL().openStream();
@@ -255,7 +254,7 @@ public class ModelLoader {
                     }
                     return new Object3D(triangles, new TextureInputStream(imageBuffer));
                 }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

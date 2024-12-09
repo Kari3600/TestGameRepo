@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import com.Kari3600.me.TestGameCommon.Entity;
 import com.Kari3600.me.TestGameCommon.GameEngine;
@@ -93,7 +94,7 @@ public class GameEngineServer extends TimerTask implements GameEngine, UDPPacket
         for (Player player : players) {
             playerMap.put(player.getAddress(),player);
             try {
-                Champion playerChamp = player.getChampion().getConstructor(GameEngine.class).newInstance(this);
+                Champion playerChamp = player.getChampion().getConstructor(GameEngine.class, UUID.class).newInstance(this,null);
                 playerChamp.setPlayer(player);
                 player.setControllingEntity(playerChamp);
             } catch (Exception e) {

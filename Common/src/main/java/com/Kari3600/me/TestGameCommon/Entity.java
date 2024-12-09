@@ -5,9 +5,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.Kari3600.me.TestGameCommon.util.Matrix;
+import com.Kari3600.me.TestGameCommon.util.Transposing;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 
-public abstract class Entity {
+public abstract class Entity implements Transposing {
 
     public enum Team{RED,NEUTRAL,BLUE}
 

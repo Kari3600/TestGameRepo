@@ -21,6 +21,7 @@ import com.Kari3600.me.TestGameCommon.packets.UDPPacketListener;
 import com.Kari3600.me.TestGameCommon.packets.UDPSingleConnection;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 import com.jogamp.opengl.util.texture.spi.awt.IIOTextureProvider;
+import com.Kari3600.me.TestGameClient.util.Object3D;
 import com.Kari3600.me.TestGameCommon.Entity;
 import com.Kari3600.me.TestGameCommon.GameEngine;
 import com.Kari3600.me.TestGameCommon.Path;
@@ -84,6 +85,9 @@ public class GameEngineClient extends TimerTask implements GameEngine, UDPPacket
                 PacketEntityAdd packetadd = (PacketEntityAdd) packet;
                 try {
                     entity = (Entity) Class.forName(packetadd.getClassName()).getConstructor(GameEngine.class,UUID.class).newInstance(this,packetadd.getEntityID());
+                    Object3D model = ModelLoader.getObject3D(packetadd.getClassName());
+                    model.setTransposer(entity);
+                    Main.getGameRenderer().addObject(model);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
