@@ -85,8 +85,6 @@ public class PacketProcessor extends AbstractProcessor {
                 .addException(ClassNotFoundException.class)
                 .returns(ClassName.bestGuess("Packet"+className));
 
-            if (hasChildren)
-                reader.addStatement("byte packetID = dis.readByte()");
 
             MethodSpec.Builder writer = MethodSpec.methodBuilder("write")
                 .addModifiers(Modifier.PUBLIC)
@@ -151,6 +149,7 @@ public class PacketProcessor extends AbstractProcessor {
             }
 
             if (hasChildren) {
+                reader.addStatement("byte packetID = dis.readByte()");
                 reader.addStatement("Packet$L packet",className);
                 reader.addCode("switch (packetID) {\n");
                 for (int id=0;id<packetHierarchy.get(className).size();++id) {
