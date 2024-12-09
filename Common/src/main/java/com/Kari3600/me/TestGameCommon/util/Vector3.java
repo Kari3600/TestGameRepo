@@ -1,6 +1,8 @@
 package com.Kari3600.me.TestGameCommon.util;
 
-public class Vector3 {
+import java.io.Serializable;
+
+public class Vector3 implements Serializable {
     public float x;
     public float y;
     public float z;

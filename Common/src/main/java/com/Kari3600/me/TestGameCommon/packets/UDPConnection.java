@@ -137,6 +137,7 @@ public class UDPConnection {
                         Packet returnPacket = PacketManager.fromStream(new ObjectInputStream(new ByteArrayInputStream(fixedBuffer)));
                         onPacket(returnPacket,packet.getAddress());
                     } catch (IOException e) {
+                        e.printStackTrace();
                         System.exit(1);
                     } catch (Exception e) {
                         e.printStackTrace();
