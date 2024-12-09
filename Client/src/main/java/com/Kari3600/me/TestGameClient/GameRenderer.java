@@ -8,6 +8,7 @@ import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashSet;
+import java.util.concurrent.CompletableFuture;
 
 import javax.swing.JFrame;
 
@@ -84,14 +85,18 @@ public class GameRenderer implements GLEventListener {
         objects2D.remove(object);
     }
 
-    public void toWorldLocation(Vector2 location, MouseRunnable task) {
+    public CompletableFuture<Vector3> toWorldLocation(Vector2 location) {
+        CompletableFuture<Vector3> future = new CompletableFuture<>();
+
         canvas.invoke(false, new GLRunnable() {
             @Override
             public boolean run(GLAutoDrawable drawable) {
-                task.run(toWorldLocation(drawable, location));
+                future.complete(toWorldLocation(drawable, location));
                 return true;
             }
         });
+
+        return future;
     }
 
     public Vector3 toWorldLocation(GLAutoDrawable drawable, Vector2 location) {

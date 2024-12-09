@@ -21,6 +21,10 @@ public class Player {
     private Class<? extends Champion> champion;
     private MovingEntity controllingEntity;
 
+    public String getUsername() {
+        return username;
+    }
+
     public InetAddress getAddress() {
         return address;
     }

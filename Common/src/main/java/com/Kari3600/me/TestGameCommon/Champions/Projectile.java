@@ -21,7 +21,7 @@ public abstract class Projectile extends Castable {
     
     @Override
     protected void onCast(Vector3 location) {
-        new ProjectileEntity(getChampion().getEngine() ,getChampion(), speed, maxDistance, getChampion().getPosition(), location.substract(getChampion().getPosition()).normalize(), piercing, collisionRadius, onHit);
+        new ProjectileEntity(getChampion().getEngine(), null ,getChampion(), speed, maxDistance, getChampion().getPosition(), location.substract(getChampion().getPosition()).normalize(), piercing, collisionRadius, onHit);
     }
 
     public Projectile(Champion champion) {

@@ -1,6 +1,7 @@
 package com.Kari3600.me.TestGameCommon.Champions;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import com.Kari3600.me.TestGameCommon.Entity;
 import com.Kari3600.me.TestGameCommon.GameEngine;
@@ -29,8 +30,8 @@ public abstract class Champion extends MovingEntity {
         // TODO implement champ death
     }
 
-    public Champion(GameEngine ge) {
-        super(ge);
+    public Champion(GameEngine ge, UUID id) {
+        super(ge,id);
         setUpAbilities();
     }
 }

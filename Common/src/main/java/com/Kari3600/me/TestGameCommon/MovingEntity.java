@@ -1,5 +1,7 @@
 package com.Kari3600.me.TestGameCommon;
 
+import java.util.UUID;
+
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 
 public abstract class MovingEntity extends LivingEntity {
@@ -31,7 +33,7 @@ public abstract class MovingEntity extends LivingEntity {
         getMatrix().lookVector(res[1]);
     }
 
-    public MovingEntity(GameEngine ge) {
-        super(ge);
+    public MovingEntity(GameEngine ge, UUID id) {
+        super(ge,id);
     }
 }

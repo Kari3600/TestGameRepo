@@ -2,6 +2,7 @@ package com.Kari3600.me.TestGameCommon;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 
@@ -41,8 +42,8 @@ public class ProjectileEntity extends Entity {
         }
     }
 
-    public ProjectileEntity(GameEngine ge, Entity caster, int speed, int maxDistance, Vector3 position, Vector3 direction, boolean piercing, int collisionRadius, ProjectileRunnable onHit) {
-        super(ge);
+    public ProjectileEntity(GameEngine ge, UUID id, Entity caster, int speed, int maxDistance, Vector3 position, Vector3 direction, boolean piercing, int collisionRadius, ProjectileRunnable onHit) {
+        super(ge,id);
         setPosition(position);
         this.speed = speed;
         this.maxDistance = maxDistance;

@@ -66,7 +66,7 @@ public class GameEngineServer extends TimerTask implements GameEngine, UDPPacket
                         vEntities.add(e);
                         if (entity instanceof Champion) {
                             InetAddress address = ((Champion) entity).getPlayer().getAddress();
-                            PacketEntityAdd packet = (PacketEntityAdd) new PacketEntityAdd().setPosition(e.getPosition()).setEntityID(e.getID()).setTick(tick);
+                            PacketEntityAdd packet = (PacketEntityAdd) new PacketEntityAdd().setClassName(e.getClass().getName()).setPosition(e.getPosition()).setEntityID(e.getID()).setTick(tick);
                             System.out.println(packet.getClass());
                             UDPConnection.getInstance().sendPacket(packet,address);
                         }
@@ -83,6 +83,7 @@ public class GameEngineServer extends TimerTask implements GameEngine, UDPPacket
         Player player = playerMap.get(address);
         if (player == null) return;
         if (packet instanceof PacketMoveCommand) {
+            System.out.println(player.getUsername()+" clicked at location "+((PacketMoveCommand) packet).getLocation());
             player.getControllingEntity().setPath(new Path(player.getControllingEntity(), ((PacketMoveCommand) packet).getLocation()));
         }
     }

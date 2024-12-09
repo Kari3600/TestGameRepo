@@ -11,8 +11,8 @@ public abstract class Entity {
 
     public enum Team{RED,NEUTRAL,BLUE}
 
-    private GameEngine ge;
-    private UUID id;
+    private final GameEngine ge;
+    private final UUID id;
     private Matrix matrix = new Matrix();
     private int collisionRadius = 0;
     private Team team;
@@ -62,12 +62,9 @@ public abstract class Entity {
         ge.removeEntity(this);
     }
 
-    public Entity(GameEngine ge) {
-        this(ge,UUID.randomUUID());
-    }
-
     public Entity(GameEngine ge, UUID id) {
         this.ge = ge;
+        if (id == null) id = UUID.randomUUID();
         this.id = id;
         this.collisionRadius = collisionRadius();
         ge.addEntity(this);

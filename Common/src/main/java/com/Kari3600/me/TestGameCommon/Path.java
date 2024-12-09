@@ -1,13 +1,14 @@
 package com.Kari3600.me.TestGameCommon;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -128,14 +129,17 @@ public class Path {
         }
     }
 
-    private static final File mapFile = new File("src/main/resources/map.png");
     private static final BufferedImage map = getMap();
     private static final float mapSize = 400000;
 
     private static BufferedImage getMap() {
         try {
+            File mapFile = new File(Path.class.getClassLoader().getResource("map.png").toURI());
+            if (!mapFile.exists()) {
+                throw new FileNotFoundException("File "+mapFile.getAbsolutePath()+" does not exist.");
+            }
             return ImageIO.read(mapFile);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -247,7 +251,7 @@ public class Path {
         return tile;
     }
 
-    public Path(MovingEntity entity, Vector3 destination) {
+    public Path(@Nonnull MovingEntity entity, @Nonnull Vector3 destination) {
         this.entity = entity;
         this.destination = destination;
         recalculate();

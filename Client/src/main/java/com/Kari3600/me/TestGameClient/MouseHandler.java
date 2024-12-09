@@ -24,11 +24,8 @@ public class MouseHandler implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        gr.toWorldLocation(new Vector2(e.getX(),e.getY()), new MouseRunnable() {
-            @Override
-            public void run(Vector3 location) {
-                ge.getConnection().sendPacket(new PacketMoveCommand().setLocation(location));
-            }
+        gr.toWorldLocation(new Vector2(e.getX(),e.getY())).thenAcceptAsync(location -> {
+            ge.getConnection().sendPacket(new PacketMoveCommand().setLocation(location));
         });
     }
 

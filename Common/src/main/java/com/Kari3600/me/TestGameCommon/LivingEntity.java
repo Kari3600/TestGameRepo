@@ -1,5 +1,7 @@
 package com.Kari3600.me.TestGameCommon;
 
+import java.util.UUID;
+
 public abstract class LivingEntity extends Entity {
 
     private int maxHealth;
@@ -19,8 +21,8 @@ public abstract class LivingEntity extends Entity {
 
     public abstract void onDeath(Entity killer);
 
-    public LivingEntity(GameEngine ge) {
-        super(ge);
+    public LivingEntity(GameEngine ge, UUID id) {
+        super(ge,id);
         this.maxHealth = maxHealth();
     }
 }

@@ -45,7 +45,8 @@ import com.Kari3600.me.TestGameCommon.util.Vector3;
     @CreatePacket.Field(type = UUID.class, name = "entityID")
 })
 @CreatePacket(name = "EntityAdd", parent = "Entity", fields = {
-    @CreatePacket.Field(type = Vector3.class, name = "position")
+    @CreatePacket.Field(type = Vector3.class, name = "position"),
+    @CreatePacket.Field(type = String.class, name = "className")
 })
 @CreatePacket(name = "EntityPath", parent = "Entity", fields = {
     @CreatePacket.Field(type = Vector3.class, name = "destination")
