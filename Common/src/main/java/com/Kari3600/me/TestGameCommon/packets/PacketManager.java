@@ -1,11 +1,10 @@
 package com.Kari3600.me.TestGameCommon.packets;
 
-import java.io.ObjectInputStream;
-import java.util.UUID;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 import com.Kari3600.me.TestGameAnnotations.packets.CreatePacket;
-import com.Kari3600.me.TestGameCommon.util.Vector2;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 
 @CreatePacket(name = "", parent = "", fields = {})
@@ -49,13 +48,13 @@ import com.Kari3600.me.TestGameCommon.util.Vector3;
     @CreatePacket.Field(type = Vector3.class, name = "position")
 })
 @CreatePacket(name = "EntityPath", parent = "Entity", fields = {
-    @CreatePacket.Field(type = Vector2.class, name = "destination")
+    @CreatePacket.Field(type = Vector3.class, name = "destination")
 })
 @CreatePacket(name = "MoveCommand", parent = "", fields = {
     @CreatePacket.Field(type = Vector3.class, name = "location")
 })
 public abstract class PacketManager {
-    public static Packet fromStream(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    public static Packet fromStream(DataInputStream ois) throws IOException, ClassNotFoundException {
         Packet packet = Packet.read(ois);
         if (packet == null) {
             throw new IOException("Invalid packet");

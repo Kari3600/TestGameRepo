@@ -66,7 +66,8 @@ public class GameEngineServer extends TimerTask implements GameEngine, UDPPacket
                         vEntities.add(e);
                         if (entity instanceof Champion) {
                             InetAddress address = ((Champion) entity).getPlayer().getAddress();
-                            Packet packet = new PacketEntityAdd().setPosition(e.getPosition()).setEntityID(e.getID()).setTick(tick);
+                            PacketEntityAdd packet = (PacketEntityAdd) new PacketEntityAdd().setPosition(e.getPosition()).setEntityID(e.getID()).setTick(tick);
+                            System.out.println(packet.getClass());
                             UDPConnection.getInstance().sendPacket(packet,address);
                         }
                     }

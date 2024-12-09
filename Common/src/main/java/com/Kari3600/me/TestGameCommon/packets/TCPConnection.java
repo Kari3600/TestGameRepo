@@ -1,8 +1,8 @@
 package com.Kari3600.me.TestGameCommon.packets;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
 import java.net.InetAddress;
@@ -10,8 +10,8 @@ import java.net.InetAddress;
 public class TCPConnection {
 
     private Socket socket;
-    private ObjectOutputStream oos;
-    private ObjectInputStream ois;
+    private DataOutputStream oos;
+    private DataInputStream ois;
 
     public InetAddress getHostAddress() {
         return socket.getInetAddress();
@@ -79,9 +79,9 @@ public class TCPConnection {
     public TCPConnection(Socket socket) {
         this.socket = socket;
         try {
-            oos = new ObjectOutputStream(socket.getOutputStream());
+            oos = new DataOutputStream(socket.getOutputStream());
             oos.flush();
-            ois = new ObjectInputStream(socket.getInputStream());
+            ois = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }

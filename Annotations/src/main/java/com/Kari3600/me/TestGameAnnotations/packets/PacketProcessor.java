@@ -1,14 +1,15 @@
 package com.Kari3600.me.TestGameAnnotations.packets;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -79,29 +80,27 @@ public class PacketProcessor extends AbstractProcessor {
             MethodSpec.Builder reader = MethodSpec.methodBuilder("read")
                 .addModifiers(Modifier.PUBLIC)
                 .addModifiers(Modifier.STATIC)
-                .addParameter(ObjectInputStream.class,"ois")
+                .addParameter(DataInputStream.class,"dis")
                 .addException(IOException.class)
                 .addException(ClassNotFoundException.class)
                 .returns(ClassName.bestGuess("Packet"+className));
 
             if (hasChildren)
-                reader.addStatement("byte packetID = ois.readByte()");
+                reader.addStatement("byte packetID = dis.readByte()");
 
             MethodSpec.Builder writer = MethodSpec.methodBuilder("write")
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(ObjectOutputStream.class,"oos")
+                .addParameter(DataOutputStream.class,"dos")
                 .addException(IOException.class);
             
             if (!className.equals("")) {
-                writer.addStatement("super.write(oos)");
-                writer.addStatement("oos.writeByte((byte) $L)",packetHierarchy.get(createPacket.parent()).indexOf(className));
+                writer.addStatement("super.write(dos)");
+                writer.addStatement("dos.writeByte((byte) $L)",packetHierarchy.get(createPacket.parent()).indexOf(className));
             }
 
             for (CreatePacket.Field field : createPacket.fields()) {
                 TypeMirror fieldTypeMirror = getFieldType(field);
-                //String fieldTypeName = fieldTypeMirror.toString();
                 TypeName fieldType = ClassName.get(fieldTypeMirror);
-                //ClassName fieldType = ClassName.bestGuess(fieldTypeName);
 
                 String fieldName = field.name();
                 System.out.println("Processing field: " + fieldName + " of type " + fieldType);
@@ -109,8 +108,30 @@ public class PacketProcessor extends AbstractProcessor {
                 FieldSpec fieldSpec = FieldSpec.builder(fieldType, fieldName, Modifier.PRIVATE).build();
                 classBuilder.addField(fieldSpec);
 
-                reader.addStatement("$L $L = ($L) ois.readObject()", fieldType, fieldName, fieldType);
-                writer.addStatement("oos.writeObject($L)",fieldName);
+                System.out.println(fieldType.toString());
+                switch (fieldType.toString()) {
+                    case "java.lang.Byte":
+                    reader.addStatement("Byte $Ltemp = dis.readByte()", fieldName);
+                    writer.addStatement("dos.writeByte($L)",fieldName);
+                    break;
+                    case "java.lang.Long":
+                    reader.addStatement("Long $Ltemp = dis.readLong()", fieldName);
+                    writer.addStatement("dos.writeLong($L)",fieldName);
+                    break;
+                    case "java.lang.String":
+                    reader.addStatement("String $Ltemp = dis.readUTF()", fieldName);
+                    writer.addStatement("dos.writeUTF($L)",fieldName);
+                    break;
+                    case "java.util.UUID":
+                    reader.addStatement("UUID $Ltemp = new UUID(dis.readLong(),dis.readLong())", fieldName);
+                    writer.addStatement("dos.writeLong($L.getMostSignificantBits())",fieldName);
+                    writer.addStatement("dos.writeLong($L.getLeastSignificantBits())",fieldName);
+                    break;
+                    default:
+                    reader.addStatement("$L $Ltemp = new $L()", fieldType, fieldName, fieldType);
+                    reader.addStatement("$Ltemp.read(dis)", fieldName);
+                    writer.addStatement("$L.write(dos)",fieldName);
+                }
 
                 MethodSpec getter = MethodSpec.methodBuilder("get" + capitalize(fieldName))
                     .addModifiers(Modifier.PUBLIC)
@@ -134,7 +155,7 @@ public class PacketProcessor extends AbstractProcessor {
                 reader.addCode("switch (packetID) {\n");
                 for (int id=0;id<packetHierarchy.get(className).size();++id) {
                     reader.addCode("    case $L:\n",id);
-                    reader.addStatement("    packet = Packet$L.read(ois)",packetHierarchy.get(className).get(id));
+                    reader.addStatement("    packet = Packet$L.read(dis)",packetHierarchy.get(className).get(id));
                     reader.addStatement("    break");
                 }
                 reader.addCode("    default:\n");
@@ -146,7 +167,7 @@ public class PacketProcessor extends AbstractProcessor {
 
             for (CreatePacket.Field field : createPacket.fields()) {
                 String fieldName = field.name();
-                reader.addStatement("packet.$L = $L", fieldName, fieldName);
+                reader.addStatement("packet.$L = $Ltemp", fieldName, fieldName);
             }
 
             reader.addStatement("return packet");

@@ -1,8 +1,10 @@
 package com.Kari3600.me.TestGameCommon.util;
 
-import java.io.Serializable;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class Vector3 implements Serializable {
+public class Vector3 implements PacketSerializable<Vector3> {
     public float x;
     public float y;
     public float z;
@@ -61,4 +63,19 @@ public class Vector3 implements Serializable {
         y=0;
         z=0;
     }
+
+    @Override
+    public void read(DataInputStream dis) throws IOException {
+        x = dis.readFloat();
+        y = dis.readFloat();
+        z = dis.readFloat();
+    }
+
+    @Override
+    public void write(DataOutputStream dos) throws IOException {
+        dos.writeFloat(x);
+        dos.writeFloat(y);
+        dos.writeFloat(z);
+    }
+
 }

@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
@@ -100,7 +100,7 @@ public class UDPConnection {
             //System.out.println("UDP Socket Address: " + socket.getLocalAddress() + ", Port: " + socket.getLocalPort());
             //System.out.println("Sending packet "+packet.getClass()+" on IP: "+getHostAddress());
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            packet.write(new ObjectOutputStream(buffer));
+            packet.write(new DataOutputStream(buffer));
             buffer.flush();
             byte[] fixedBuffer = buffer.toByteArray();
             if (fixedBuffer == null || fixedBuffer.length == 0) {
@@ -134,7 +134,7 @@ public class UDPConnection {
                         byte[] fixedBuffer = new byte[65535];
                         DatagramPacket packet = new DatagramPacket(fixedBuffer, fixedBuffer.length);
                         socket.receive(packet);
-                        Packet returnPacket = PacketManager.fromStream(new ObjectInputStream(new ByteArrayInputStream(fixedBuffer)));
+                        Packet returnPacket = PacketManager.fromStream(new DataInputStream(new ByteArrayInputStream(fixedBuffer)));
                         onPacket(returnPacket,packet.getAddress());
                     } catch (IOException e) {
                         e.printStackTrace();
