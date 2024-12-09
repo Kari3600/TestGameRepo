@@ -71,7 +71,6 @@ public class UDPConnection {
         try {
             latch.await(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -117,6 +116,12 @@ public class UDPConnection {
         }
     }
 
+    protected void onPacket(Packet packet,InetAddress address) {
+        for (UDPPacketListener listener : listeners) {
+            listener.onPacket(packet,address);
+        }
+    }
+
     public UDPConnection() {
         instance = this;
         socket = getSocket();
@@ -130,9 +135,7 @@ public class UDPConnection {
                         DatagramPacket packet = new DatagramPacket(fixedBuffer, fixedBuffer.length);
                         socket.receive(packet);
                         Packet returnPacket = PacketManager.fromStream(new ObjectInputStream(new ByteArrayInputStream(fixedBuffer)));
-                        for (UDPPacketListener listener : listeners) {
-                            listener.onPacket(returnPacket,packet.getAddress());
-                        }
+                        onPacket(returnPacket,packet.getAddress());
                     } catch (IOException e) {
                         System.exit(1);
                     } catch (Exception e) {

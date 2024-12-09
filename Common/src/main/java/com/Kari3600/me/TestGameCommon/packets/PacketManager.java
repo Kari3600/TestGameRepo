@@ -51,6 +51,9 @@ import com.Kari3600.me.TestGameCommon.util.Vector3;
 @CreatePacket(name = "EntityPath", parent = "Entity", fields = {
     @CreatePacket.Field(type = Vector2.class, name = "destination")
 })
+@CreatePacket(name = "MoveCommand", parent = "", fields = {
+    @CreatePacket.Field(type = Vector3.class, name = "location")
+})
 public abstract class PacketManager {
     public static Packet fromStream(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         Packet packet = Packet.read(ois);

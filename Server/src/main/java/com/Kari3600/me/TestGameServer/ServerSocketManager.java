@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutionException;
 import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
 import com.Kari3600.me.TestGameCommon.packets.UDPConnection;
 import com.Kari3600.me.TestGameCommon.packets.UDPPacketListener;
+import com.Kari3600.me.TestGameCommon.Player;
+import com.Kari3600.me.TestGameCommon.Champions.Braum.Braum;
 import com.Kari3600.me.TestGameCommon.packets.Packet;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginRequest;
 import com.Kari3600.me.TestGameCommon.packets.PacketLoginResponse;
@@ -55,6 +57,9 @@ public class ServerSocketManager implements Runnable, UDPPacketListener {
                 return;
             }
             conn.sendPacket(new PacketLoginResult().setStatus((byte) 0));
+            Player pl = new Player(packet.getUsername(),conn);
+            // TODO temporary solution
+            pl.setChampion(Braum.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,7 +101,8 @@ public class ServerSocketManager implements Runnable, UDPPacketListener {
                             if (packet instanceof PacketQueueJoin) {
                                 PacketQueueJoin joinQueuePacket = (PacketQueueJoin) packet;
                                 System.out.println("Player joined");
-                                Queue.queuePlayer(conn);
+                                Queue.queuePlayer(Player.getByAddress(conn.getHostAddress()));
+                                // TODO check if player is in the game
                             }
                         }
                     }

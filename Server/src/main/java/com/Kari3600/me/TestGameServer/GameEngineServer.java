@@ -1,6 +1,7 @@
 package com.Kari3600.me.TestGameServer;
 
 import java.util.Set;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -10,19 +11,22 @@ import com.Kari3600.me.TestGameCommon.Entity;
 import com.Kari3600.me.TestGameCommon.GameEngine;
 import com.Kari3600.me.TestGameCommon.LivingEntity;
 import com.Kari3600.me.TestGameCommon.Path;
+import com.Kari3600.me.TestGameCommon.Player;
 import com.Kari3600.me.TestGameCommon.Champions.Champion;
 import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
 import com.Kari3600.me.TestGameCommon.packets.UDPConnection;
+import com.Kari3600.me.TestGameCommon.packets.UDPPacketListener;
+import com.Kari3600.me.TestGameCommon.packets.Packet;
 import com.Kari3600.me.TestGameCommon.packets.PacketEntityAdd;
+import com.Kari3600.me.TestGameCommon.packets.PacketMoveCommand;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 
-public class GameEngineServer extends TimerTask implements GameEngine {
+public class GameEngineServer extends TimerTask implements GameEngine, UDPPacketListener {
 
     private final float TPS = 20;
     private final Set<Entity> entities = new HashSet<Entity>();
     private final Map<LivingEntity,HashSet<Entity>> visibleEntities = new HashMap<>();
-    private final Map<TCPConnection,Champion> championMap = new HashMap<>();
-    private final Map<Champion,TCPConnection> connectionMap = new HashMap<>();
+    private final Map<InetAddress,Player> playerMap = new HashMap<>();
     private long tick = 0;
     private long lastTick = 0;
 
@@ -61,7 +65,7 @@ public class GameEngineServer extends TimerTask implements GameEngine {
                     if (visible && !vEntities.contains(entity)) {
                         vEntities.add(e);
                         if (entity instanceof Champion) {
-                            UDPConnection.getInstance().sendPacket(new PacketEntityAdd().setPosition(e.getPosition()).setEntityID(e.getID()).setTick(tick),connectionMap.get(entity).getHostAddress());
+                            UDPConnection.getInstance().sendPacket(new PacketEntityAdd().setPosition(e.getPosition()).setEntityID(e.getID()).setTick(tick),((Champion) entity).getPlayer().getAddress());
                         }
                     }
                     
@@ -70,6 +74,26 @@ public class GameEngineServer extends TimerTask implements GameEngine {
         }
         tick++;
         //System.out.println(String.format("New player position: %f, %f, %f",player.getPosition().x,player.getPosition().y,player.getPosition().z));
+    }
+
+    public void onPacket(Packet packet, InetAddress address) {
+        Player player = playerMap.get(address);
+        if (player == null) return;
+        if (packet instanceof PacketMoveCommand) {
+            player.getControllingEntity().setPath(new Path(player.getControllingEntity(), ((PacketMoveCommand) packet).getLocation()));
+        }
+    }
+
+    public GameEngineServer(Set<Player> players) {
+        for (Player player : players) {
+            playerMap.put(player.getAddress(),player);
+            try {
+                Champion playerChamp = player.getChampion().getConstructor(GameEngine.class).newInstance(this);
+                player.setControllingEntity(playerChamp);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
