@@ -72,7 +72,9 @@ class RegisterPanel extends JFrame {
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!passwordField.getPassword().equals(confirmPasswordField.getPassword())) {
+                if (!String.copyValueOf(passwordField.getPassword()).equals(String.copyValueOf(confirmPasswordField.getPassword()))) {
+                    System.out.println(passwordField.getPassword());
+                    System.out.println(confirmPasswordField.getPassword());
                     JOptionPane.showMessageDialog(registerButton, "Passwords must match.", "Register Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
