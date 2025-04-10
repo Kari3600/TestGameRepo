@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -185,6 +186,17 @@ public class PacketProcessor extends AbstractProcessor {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        Set<TypeElement> annotatedClasses;
+        try {
+            annotatedClasses = roundEnv.getElementsAnnotatedWith(PacketEvent.class).stream().map(TypeElement.class::cast).collect(Collectors.toSet());
+        } catch (MirroredTypeException mte) {
+            mte.printStackTrace();
+            return false;
+        }
+        List<TypeElement> sortedEvents = new TopologicalSorter(annotatedClasses,processingEnv).sort();
+        for (TypeElement typeElement : sortedEvents) {
+            System.out.println(typeElement.getQualifiedName());
         }
         return true;
     }

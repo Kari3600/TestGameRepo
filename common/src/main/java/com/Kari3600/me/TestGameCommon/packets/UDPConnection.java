@@ -82,9 +82,9 @@ public class UDPConnection {
             pings.add(receivePings[n]-sendPings[n]);
         }
         pings.sort(null);
-        System.out.println("5%tile: "+pings.get(5));
+        System.out.println("5%tile: "+Math.max(pings.get(5),0));
         System.out.println("95%tile: "+pings.get(250) );
-        return pings.get(250)-pings.get(5);
+        return pings.get(250)-Math.max(pings.get(5),0);
     }
 
     public void register(UDPPacketListener listener) {
@@ -136,11 +136,9 @@ public class UDPConnection {
                         socket.receive(packet);
                         Packet returnPacket = PacketManager.fromStream(new DataInputStream(new ByteArrayInputStream(fixedBuffer)));
                         onPacket(returnPacket,packet.getAddress());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        System.exit(1);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        System.exit(1);
                     }
                 }
             }

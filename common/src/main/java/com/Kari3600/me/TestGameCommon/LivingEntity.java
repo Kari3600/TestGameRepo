@@ -21,7 +21,7 @@ public abstract class LivingEntity extends Entity {
 
     public abstract void onDeath(Entity killer);
 
-    public LivingEntity(GameEngine ge, UUID id) {
+    public LivingEntity(GameState ge, UUID id) {
         super(ge,id);
         this.maxHealth = maxHealth();
     }

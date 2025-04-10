@@ -8,43 +8,21 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.UUID;
 
-import com.Kari3600.me.TestGameCommon.Entity;
-import com.Kari3600.me.TestGameCommon.GameEngine;
-import com.Kari3600.me.TestGameCommon.LivingEntity;
-import com.Kari3600.me.TestGameCommon.Path;
-import com.Kari3600.me.TestGameCommon.Player;
+import com.Kari3600.me.TestGameCommon.*;
+import com.Kari3600.me.TestGameCommon.GameState;
 import com.Kari3600.me.TestGameCommon.Champions.Champion;
-import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
 import com.Kari3600.me.TestGameCommon.packets.UDPConnection;
 import com.Kari3600.me.TestGameCommon.packets.UDPPacketListener;
 import com.Kari3600.me.TestGameCommon.packets.Packet;
 import com.Kari3600.me.TestGameCommon.packets.PacketEntityAdd;
 import com.Kari3600.me.TestGameCommon.packets.PacketMoveCommand;
-import com.Kari3600.me.TestGameCommon.util.Vector3;
 
-public class GameEngineServer extends TimerTask implements GameEngine, UDPPacketListener {
+public class GameEngineServer extends TimerTask implements UDPPacketListener {
 
-    private final float TPS = 20;
-    private final Set<Entity> entities = new HashSet<Entity>();
     private final Map<LivingEntity,HashSet<Entity>> visibleEntities = new HashMap<>();
     private final Map<InetAddress,Player> playerMap = new HashMap<>();
     private long tick = 0;
     private long lastTick = 0;
-
-    public void addEntity(Entity entity) {
-        entities.add(entity);
-        if (entity instanceof LivingEntity) {
-            visibleEntities.put((LivingEntity) entity, new HashSet<>());
-        }
-    }
-
-    public void removeEntity(Entity entity) {
-        entities.remove(entity);
-    }
-
-    public Set<Entity> getAllEntities() {
-        return entities;
-    }
 
     @Override
     public void run() {
@@ -55,7 +33,7 @@ public class GameEngineServer extends TimerTask implements GameEngine, UDPPacket
         }
         //System.out.println("Tick");
         for (Entity entity : entities.toArray(new Entity[]{})) {
-            entity.perTick(TPS);
+            entity.perTick();
             if (entity instanceof LivingEntity) {
                 for (Entity e : entities) {
                     boolean visible = false;
@@ -94,7 +72,7 @@ public class GameEngineServer extends TimerTask implements GameEngine, UDPPacket
         for (Player player : players) {
             playerMap.put(player.getAddress(),player);
             try {
-                Champion playerChamp = player.getChampion().getConstructor(GameEngine.class, UUID.class).newInstance(this,null);
+                Champion playerChamp = player.getChampion().getConstructor(GameState.class, UUID.class).newInstance(this,null);
                 playerChamp.setPlayer(player);
                 player.setControllingEntity(playerChamp);
             } catch (Exception e) {

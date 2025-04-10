@@ -90,13 +90,14 @@ public class ModelLoader {
     }
 
     private static Object3D createObject3D(String name) {
-        switch (name) {
+        // TODO temporary solution
+        switch (name.replaceAll(".*\\.", "")) {
             case "Braum":
                 return ModelLoader.getObject3DfromGLB("Braum",0).movePivot(new Vector3(-4500,0,-2000));
             case "Boom":
                 return ModelLoader.getObject3DfromGLB("Braum",1).movePivot(new Vector3(-4500,0,-2000));
             default:
-                return null;
+                throw new IllegalArgumentException("Model "+name.replaceAll(".*\\.", "")+" does not exist.");
         }
     }
 

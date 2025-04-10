@@ -1,17 +1,14 @@
 package com.Kari3600.me.TestGameServer;
 
-import java.util.Timer;
-
-import com.Kari3600.me.TestGameCommon.GameEngine;
-import com.Kari3600.me.TestGameCommon.Champions.Braum.Braum;
+import com.Kari3600.me.TestGameCommon.GameState;
 import com.Kari3600.me.TestGameCommon.packets.UDPConnection;
 
 public class Main {
 
-    private static GameEngine gameEngine;
+    private static GameState gameState;
 
-    public static GameEngine getGameEngine() {
-        return gameEngine;
+    public static GameState getGameEngine() {
+        return gameState;
     }
 
     public static void printMatrix(float[] matrix) {
@@ -22,10 +19,10 @@ public class Main {
 
     public static void main(String[] args) {
         
-        //gameEngine = new GameEngine();
-        //gameEngine.setPlayerCharacter(new Braum());
-        //gameEngine.registerEntity(new Braum());
-        //new Timer().scheduleAtFixedRate(gameEngine, 1000L/20, 1000L/20);
+        //gameState = new GameState();
+        //gameState.setPlayerCharacter(new Braum());
+        //gameState.registerEntity(new Braum());
+        //new Timer().scheduleAtFixedRate(gameState, 1000L/20, 1000L/20);
         ServerSocketManager ssm = new ServerSocketManager();
         new UDPConnection().register(ssm);
         new Thread(ssm).start();

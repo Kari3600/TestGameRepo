@@ -6,20 +6,14 @@ import java.util.UUID;
 
 import javax.swing.SwingUtilities;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import com.Kari3600.me.TestGameClient.gui.ClientPane;
 import com.Kari3600.me.TestGameClient.gui.LoginPanel;
-import com.Kari3600.me.TestGameCommon.GameEngine;
-import com.Kari3600.me.TestGameCommon.Champions.Braum.Braum;
 import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
-import com.Kari3600.me.TestGameCommon.packets.UDPConnection;
-import com.Kari3600.me.TestGameCommon.packets.PacketManager;
 
 public class Main {
 

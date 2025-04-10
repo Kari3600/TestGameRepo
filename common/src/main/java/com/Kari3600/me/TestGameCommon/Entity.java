@@ -12,7 +12,6 @@ public abstract class Entity implements Transposing {
 
     public enum Team{RED,NEUTRAL,BLUE}
 
-    private final GameEngine ge;
     private final UUID id;
     private Matrix matrix = new Matrix();
     private int collisionRadius = 0;
@@ -32,7 +31,7 @@ public abstract class Entity implements Transposing {
 
     public Set<Entity> checkCollision() {
         Set<Entity> set = new HashSet<Entity>();
-        for (Entity entity : ge.getAllEntities()) {
+        for (Entity entity : GameState.getCurrentGameState().getAllEntities()) {
             if (entity == this) continue;
             if (entity.getPosition().substract(getPosition()).length() <= entity.getCollisionRadius()+getCollisionRadius()) {
                 set.add(entity);
@@ -53,22 +52,17 @@ public abstract class Entity implements Transposing {
         return matrix;
     }
 
-    public abstract void perTick(float TPS);
-
-    public GameEngine getEngine() {
-        return ge;
-    }
+    public abstract void perTick(float TPS, GameState gs);
 
     public void remove() {
-        ge.removeEntity(this);
+        GameState.getCurrentGameState().removeEntity(this);
     }
 
-    public Entity(GameEngine ge, UUID id) {
-        this.ge = ge;
+    public Entity(UUID id) {
         if (id == null) id = UUID.randomUUID();
         this.id = id;
         this.collisionRadius = collisionRadius();
-        ge.addEntity(this);
+        GameState.getCurrentGameState().addEntity(this);
     }
 
 }

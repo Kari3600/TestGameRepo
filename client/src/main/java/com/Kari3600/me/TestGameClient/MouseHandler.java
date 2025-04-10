@@ -3,13 +3,9 @@ package com.Kari3600.me.TestGameClient;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import com.Kari3600.me.TestGameCommon.GameEngine;
-import com.Kari3600.me.TestGameCommon.Path;
-import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
 //import com.Kari3600.me.TestGameCommon.packets.PacketEntityAdd;
 import com.Kari3600.me.TestGameCommon.packets.PacketMoveCommand;
 import com.Kari3600.me.TestGameCommon.util.Vector2;
-import com.Kari3600.me.TestGameCommon.util.Vector3;
 
 public class MouseHandler implements MouseListener {
 

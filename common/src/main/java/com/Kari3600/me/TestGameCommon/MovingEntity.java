@@ -33,7 +33,7 @@ public abstract class MovingEntity extends LivingEntity {
         getMatrix().lookVector(res[1]);
     }
 
-    public MovingEntity(GameEngine ge, UUID id) {
+    public MovingEntity(GameState ge, UUID id) {
         super(ge,id);
     }
 }

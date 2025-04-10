@@ -42,7 +42,7 @@ public class ProjectileEntity extends Entity {
         }
     }
 
-    public ProjectileEntity(GameEngine ge, UUID id, Entity caster, int speed, int maxDistance, Vector3 position, Vector3 direction, boolean piercing, int collisionRadius, ProjectileRunnable onHit) {
+    public ProjectileEntity(GameState ge, UUID id, Entity caster, int speed, int maxDistance, Vector3 position, Vector3 direction, boolean piercing, int collisionRadius, ProjectileRunnable onHit) {
         super(ge,id);
         setPosition(position);
         this.speed = speed;
