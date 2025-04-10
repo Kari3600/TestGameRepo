@@ -20,6 +20,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.JavaFileObject;
 
@@ -34,6 +35,8 @@ import com.squareup.javapoet.TypeSpec;
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("*")
 public class PacketProcessor extends AbstractProcessor {
+
+    private Map<String,CreatePacketInfo> dependencyGraph = new HashMap<>();
 
     private String capitalize(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
@@ -194,9 +197,21 @@ public class PacketProcessor extends AbstractProcessor {
             mte.printStackTrace();
             return false;
         }
-        List<TypeElement> sortedEvents = new TopologicalSorter(annotatedClasses,processingEnv).sort();
-        for (TypeElement typeElement : sortedEvents) {
-            System.out.println(typeElement.getQualifiedName());
+        for (TypeElement element : annotatedClasses) {
+            System.out.println("Found something");
+            dependencyGraph.put(element.getQualifiedName().toString(), new CreatePacketInfo(element));
+        }
+        for (CreatePacketInfo packetInfo : dependencyGraph.values()) {
+            TypeMirror superclass = packetInfo.clazz.getSuperclass();
+            if (superclass.getKind() == TypeKind.NONE) continue;
+            String superName = processingEnv.getTypeUtils().erasure(superclass).toString();
+            if (!dependencyGraph.containsKey(superName)) continue;
+            CreatePacketInfo superPacketInfo = dependencyGraph.get(superName);
+            packetInfo.parent = superPacketInfo;
+            superPacketInfo.children.add(packetInfo);
+        }
+        for (CreatePacketInfo packetInfo : dependencyGraph.values()) {
+            System.out.println(packetInfo);
         }
         return true;
     }
