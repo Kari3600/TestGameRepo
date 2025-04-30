@@ -13,6 +13,7 @@ import java.net.InetAddress;
 
 import com.Kari3600.me.TestGameClient.gui.ClientPane;
 import com.Kari3600.me.TestGameClient.gui.LoginPanel;
+import com.Kari3600.me.TestGameCommon.game.GameJoin;
 import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
 
 public class Main {
@@ -48,6 +49,7 @@ public class Main {
     public static void launchGame() {
         gameEngine = new GameEngineClient(conn.getHostAddress());
         gameRenderer = new GameRenderer();
+        gameEngine.getConnection().sendPacket(new GameJoin());
         new Timer().scheduleAtFixedRate(gameEngine, 1000L/20, 1000L/20);
     }
 

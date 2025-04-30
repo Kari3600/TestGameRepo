@@ -15,6 +15,9 @@ import javax.swing.JFrame;
 import com.Kari3600.me.TestGameCommon.Champions.Champion;
 import com.Kari3600.me.TestGameClient.util.Object2D;
 import com.Kari3600.me.TestGameClient.util.Object3D;
+import com.Kari3600.me.TestGameCommon.Entity;
+import com.Kari3600.me.TestGameCommon.GameEngine;
+import com.Kari3600.me.TestGameCommon.GameState;
 import com.Kari3600.me.TestGameCommon.util.Vector2;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 import com.jogamp.opengl.GL;
@@ -25,6 +28,7 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.GLRunnable;
 import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -36,8 +40,7 @@ public class GameRenderer implements GLEventListener {
     private final GLU glu = new GLU();
     private final TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
     private final JFrame frame;
-    private final GLCanvas canvas;
-    private GameEngineClient ge = Main.getGameEngine();
+    private final GLJPanel canvas;
     private HashSet<Object3D> objects3D = new HashSet<Object3D>();
     private HashSet<Object2D> objects2D = new HashSet<Object2D>();
     private int cameraDistance = 45000;
@@ -59,7 +62,7 @@ public class GameRenderer implements GLEventListener {
         return frame;
     }
 
-    public GLCanvas getCanvas() {
+    public GLJPanel getCanvas() {
         return canvas;
     }
 
@@ -198,7 +201,7 @@ public class GameRenderer implements GLEventListener {
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT );
         gl.glLoadIdentity();
-        Champion character = ge.getPlayerCharacter();
+        Champion character = GameEngineClient.getInstance().getPlayerCharacter();
         Vector3 position;
         if (character == null) {
             position = new Vector3(0,0,0);
@@ -220,9 +223,9 @@ public class GameRenderer implements GLEventListener {
         gl.glVertex3d(200000.0,0.0,-200000.0);
         gl.glEnd();
 
-        for (Object3D obj : objects3D) {
+        for (Entity entity : GameState.getCurrentGameState().getAllEntities()) {
             gl.glPushMatrix();
-            obj.render(drawable);
+            ModelLoader.getObject3D(entity.getClass().getName()).render(drawable,entity.getMatrix());
             gl.glPopMatrix();
         }
         for (Object2D obj : objects2D) {
@@ -280,7 +283,7 @@ public class GameRenderer implements GLEventListener {
 
     public GameRenderer() {
         //System.setProperty("jogl.debug", "true");
-         // Create a GLProfile
+        // Create a GLProfile
         GLProfile profile = GLProfile.getDefault();
         GLCapabilities capabilities = new GLCapabilities(profile);
         capabilities.setDepthBits(24);
@@ -288,7 +291,7 @@ public class GameRenderer implements GLEventListener {
         capabilities.setHardwareAccelerated(true);
 
         // Create a canvas
-        canvas = new GLCanvas(capabilities);
+        canvas = new GLJPanel(capabilities);
         canvas.addGLEventListener(this);
         if (!fullscreen) {
             canvas.setPreferredSize(screenSize);

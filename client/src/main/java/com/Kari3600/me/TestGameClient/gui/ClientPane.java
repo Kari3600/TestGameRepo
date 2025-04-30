@@ -4,11 +4,11 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 
-import com.Kari3600.me.TestGameClient.Main;
 import com.Kari3600.me.TestGameCommon.packets.Packet;
-import com.Kari3600.me.TestGameCommon.packets.PacketQueueCount;
-import com.Kari3600.me.TestGameCommon.packets.PacketQueueJoin;
-import com.Kari3600.me.TestGameCommon.packets.PacketQueueStart;
+import com.Kari3600.me.TestGameClient.Main;
+import com.Kari3600.me.TestGameCommon.queue.QueueCount;
+import com.Kari3600.me.TestGameCommon.queue.QueueJoin;
+import com.Kari3600.me.TestGameCommon.queue.QueueStart;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -55,18 +55,18 @@ public class ClientPane extends JLayeredPane {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        PacketQueueJoin packet = new PacketQueueJoin();
+                        QueueJoin packet = new QueueJoin();
                         System.out.println("Packet sent");
                         Main.getConnection().sendPacket(packet);
                         byte count = 0;
                         while (true) {
                             Packet p = Main.getConnection().waitForPacket();
-                            if (p instanceof PacketQueueCount) {
-                                PacketQueueCount queueCountPacket = (PacketQueueCount) p;
+                            if (p instanceof QueueCount) {
+                                QueueCount queueCountPacket = (QueueCount) p;
                                 count = queueCountPacket.getCount();
                                 queueUpPlayers(count);
                                 System.out.println("Current player count: "+count);
-                            } else if (p instanceof PacketQueueStart) {
+                            } else if (p instanceof QueueStart) {
                                 Main.launchGame();
                                 
                             } else {

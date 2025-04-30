@@ -84,9 +84,9 @@ public class ModelLoader {
     }
 
     public static Object3D getObject3D(String name) {
-        if (models.containsKey(name)) return models.get(name).clone();
+        if (models.containsKey(name)) return models.get(name);
         models.put(name, createObject3D(name));
-        return models.get(name).clone();
+        return models.get(name);
     }
 
     private static Object3D createObject3D(String name) {

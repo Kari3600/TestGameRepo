@@ -6,51 +6,47 @@ import java.util.UUID;
 
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 
-public class ProjectileEntity extends Entity {
+public abstract class ProjectileEntity extends Entity {
 
+    private Entity caster;
     private int speed;
     private int maxDistance;
     private int distance = 0;
     private Vector3 direction;
     private boolean piercing;
-    private ProjectileRunnable onHit;
 
     private Set<Entity> entitiesHit = new HashSet<Entity>();
 
-    @Override
-    protected int collisionRadius() {
-        return 0;
-    }
+    protected abstract void onHit(Entity caster, Entity e);
 
     @Override
-    public void perTick(float TPS) {
-        if (distance<maxDistance) {
-            setPosition(getPosition().add(direction.multiply(speed/TPS)));
-            distance+=speed/TPS;
-            Set<Entity> entities = checkCollision();
-            for (Entity entity : entities) {
-                if (entitiesHit.contains(entity)) continue;
-                onHit.run(entity);
-                entitiesHit.add(entity);
-                if (!piercing) {
-                    remove();
-                    return;
-                }
-            }
-        } else {
+    public void perTick() {
+        if (distance>maxDistance) {
             remove();
+            return;
+        }
+        setPosition(getPosition().add(direction.multiply(speed/GameState.TPS)));
+        distance+=speed/GameState.TPS;
+        Set<Entity> entities = checkCollision();
+        for (Entity entity : entities) {
+            if (entitiesHit.contains(entity)) continue;
+            if (!(entity instanceof LivingEntity)) continue;
+            onHit(caster, entity);
+            entitiesHit.add(entity);
+            if (!piercing) {
+                remove();
+                return;
+            }
         }
     }
 
-    public ProjectileEntity(GameState ge, UUID id, Entity caster, int speed, int maxDistance, Vector3 position, Vector3 direction, boolean piercing, int collisionRadius, ProjectileRunnable onHit) {
-        super(ge,id);
+    public ProjectileEntity(UUID id, Entity caster, int speed, int maxDistance, Vector3 position, Vector3 direction, boolean piercing, int collisionRadius) {
+        super(id,collisionRadius);
         setPosition(position);
         this.speed = speed;
         this.maxDistance = maxDistance;
         this.direction = direction;
         this.piercing = piercing;
-        setCollisionRadius(collisionRadius);
-        this.onHit = onHit;
         entitiesHit.add(caster);
     }
     

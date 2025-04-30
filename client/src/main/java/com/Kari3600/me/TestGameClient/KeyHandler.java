@@ -28,19 +28,19 @@ public class KeyHandler implements KeyListener {
         gr.toWorldLocation( new Vector2(mouseLocation.getX(),mouseLocation.getY())).thenAcceptAsync(location -> {
             switch (event.getKeyChar()) {
                 case 'q':
-                champ.getAbility(Ability.Key.Q).onPress(location);
+                champ.getAbilities().get(Ability.Key.Q).onPress(champ,location);
                 break;
     
                 case 'w':
-                champ.getAbility(Ability.Key.W).onPress(location);
+                champ.getAbilities().get(Ability.Key.W).onPress(champ,location);
                 break;
     
                 case 'e':
-                champ.getAbility(Ability.Key.E).onPress(location);
+                champ.getAbilities().get(Ability.Key.E).onPress(champ,location);
                 break;
     
                 case 'r':
-                champ.getAbility(Ability.Key.R).onPress(location);
+                champ.getAbilities().get(Ability.Key.R).onPress(champ,location);
                 break;
             }
         });
@@ -55,20 +55,20 @@ public class KeyHandler implements KeyListener {
         gr.toWorldLocation(new Vector2(mouseLocation.getX(),mouseLocation.getY())).thenAcceptAsync(location -> {
             switch (event.getKeyChar()) {
                 case 'q':
-                champ.getAbility(Ability.Key.Q).onRelease(location);
-                break;
-    
+                    champ.getAbilities().get(Ability.Key.Q).onRelease(champ,location);
+                    break;
+
                 case 'w':
-                champ.getAbility(Ability.Key.W).onRelease(location);
-                break;
-    
+                    champ.getAbilities().get(Ability.Key.W).onRelease(champ,location);
+                    break;
+
                 case 'e':
-                champ.getAbility(Ability.Key.E).onRelease(location);
-                break;
-    
+                    champ.getAbilities().get(Ability.Key.E).onRelease(champ,location);
+                    break;
+
                 case 'r':
-                champ.getAbility(Ability.Key.R).onRelease(location);
-                break;
+                    champ.getAbilities().get(Ability.Key.R).onRelease(champ,location);
+                    break;
             }
         });
     }

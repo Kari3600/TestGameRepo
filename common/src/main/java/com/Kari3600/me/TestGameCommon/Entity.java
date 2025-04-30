@@ -1,27 +1,26 @@
 package com.Kari3600.me.TestGameCommon;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.lang.reflect.Constructor;
+import java.util.*;
 
+import com.Kari3600.me.RapidSerializer.TreeSerializable;
 import com.Kari3600.me.TestGameCommon.util.Matrix;
-import com.Kari3600.me.TestGameCommon.util.Transposing;
 import com.Kari3600.me.TestGameCommon.util.Vector3;
 
-public abstract class Entity implements Transposing {
+@TreeSerializable
+public abstract class Entity {
 
     public enum Team{RED,NEUTRAL,BLUE}
 
     private final UUID id;
     private Matrix matrix = new Matrix();
-    private int collisionRadius = 0;
+    private int collisionRadius;
     private Team team;
 
     public UUID getID() {
         return id;
     }
 
-    protected abstract int collisionRadius();
     public int getCollisionRadius() {
         return collisionRadius;
     }
@@ -52,16 +51,16 @@ public abstract class Entity implements Transposing {
         return matrix;
     }
 
-    public abstract void perTick(float TPS, GameState gs);
+    public abstract void perTick();
 
     public void remove() {
         GameState.getCurrentGameState().removeEntity(this);
     }
 
-    public Entity(UUID id) {
+    public Entity(UUID id, int collisionRadius) {
         if (id == null) id = UUID.randomUUID();
         this.id = id;
-        this.collisionRadius = collisionRadius();
+        this.collisionRadius = collisionRadius;
         GameState.getCurrentGameState().addEntity(this);
     }
 

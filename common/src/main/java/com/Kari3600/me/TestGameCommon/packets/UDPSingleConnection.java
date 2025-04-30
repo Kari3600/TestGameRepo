@@ -1,10 +1,13 @@
 package com.Kari3600.me.TestGameCommon.packets;
 
+import com.Kari3600.me.TestGameCommon.packets.Packet;
+
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 public class UDPSingleConnection extends UDPConnection {
 
-    private final InetAddress host;
+    private final InetSocketAddress host;
     
     public long checkConnection() {
         return checkConnection(host);
@@ -15,12 +18,12 @@ public class UDPSingleConnection extends UDPConnection {
     }
 
     @Override
-    protected void onPacket(Packet packet, InetAddress address) {
+    protected void onPacket(Packet packet, InetSocketAddress address) {
         if (!address.equals(host)) return;
         super.onPacket(packet, address);
     }
 
-    public UDPSingleConnection(InetAddress host) {
+    public UDPSingleConnection(InetSocketAddress host) {
         super();
         this.host = host;
     }

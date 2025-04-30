@@ -1,5 +1,8 @@
 package com.Kari3600.me.TestGameCommon.util;
 
+import com.Kari3600.me.RapidSerializer.PrimitiveSerializable;
+
+@PrimitiveSerializable
 public class Matrix {
 
     private float[] m = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};

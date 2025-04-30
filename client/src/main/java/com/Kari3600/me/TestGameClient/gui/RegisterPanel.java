@@ -3,9 +3,9 @@ package com.Kari3600.me.TestGameClient.gui;
 import javax.swing.*;
 
 import com.Kari3600.me.TestGameClient.Main;
+import com.Kari3600.me.TestGameCommon.account.RegisterRequest;
+import com.Kari3600.me.TestGameCommon.account.RegisterResult;
 import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
-import com.Kari3600.me.TestGameCommon.packets.PacketRegisterRequest;
-import com.Kari3600.me.TestGameCommon.packets.PacketRegisterResult;
 import com.Kari3600.me.TestGameCommon.util.EncryptionUtil;
 
 import java.awt.*;
@@ -77,12 +77,12 @@ class RegisterPanel extends JFrame {
                     return;
                 }
                 TCPConnection conn = Main.getConnection();
-                conn.sendPacketRequest(new PacketRegisterRequest().setUsername(String.valueOf(usernameField.getText())).setPassword(EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword())))).thenAccept(resultPacket -> {
-                    if (!(resultPacket instanceof PacketRegisterResult)) {
+                conn.sendPacketRequest(new RegisterRequest(String.valueOf(usernameField.getText()),EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword())))).thenAccept(resultPacket -> {
+                    if (!(resultPacket instanceof RegisterResult)) {
                         System.out.println("Wrong packet");
                         return;
                     }
-                    PacketRegisterResult registerResult = (PacketRegisterResult) resultPacket;
+                    RegisterResult registerResult = (RegisterResult) resultPacket;
                     switch (registerResult.getStatus()) {
                         case 0:
                         JOptionPane.showMessageDialog(registerButton, "Register successful, now log in.", "Register", JOptionPane.INFORMATION_MESSAGE);

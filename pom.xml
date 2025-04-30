@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>annotations</module>
         <module>common</module>
         <module>client</module>
         <module>server</module>

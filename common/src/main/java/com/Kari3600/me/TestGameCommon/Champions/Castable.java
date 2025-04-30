@@ -7,13 +7,12 @@ public abstract class Castable extends Ability {
     private long toNextCast = 0;
     private long cooldown;
 
-    protected abstract long cooldown();
-    protected abstract void onCast(Vector3 location);
+    protected abstract void onCast(Champion champion, Vector3 location);
 
     @Override
-    public boolean onPress(Vector3 location) {
+    public boolean onPress(Champion champion, Vector3 location) {
         if (System.currentTimeMillis() >= toNextCast) {
-            onCast(location);
+            onCast(champion, location);
             toNextCast = System.currentTimeMillis()+cooldown;
             return true;
         } else {
@@ -22,13 +21,12 @@ public abstract class Castable extends Ability {
     }
 
     @Override
-    public boolean onRelease(Vector3 location) {
+    public boolean onRelease(Champion champion, Vector3 location) {
         return true;
     }
 
-    public Castable(Champion champion) {
-        super(champion);
-        this.cooldown = cooldown();
+    public Castable(long cooldown) {
+        this.cooldown = cooldown;
     }
 
 }

@@ -1,31 +1,30 @@
 package com.Kari3600.me.TestGameClient;
 
 import java.net.InetAddress;
-import java.util.Collection;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.Kari3600.me.TestGameCommon.packets.Packet;
+import com.Kari3600.me.TestGameCommon.GameEngine;
 import com.Kari3600.me.TestGameCommon.GameState;
 
 import com.Kari3600.me.TestGameCommon.Champions.Champion;
-import com.Kari3600.me.TestGameCommon.packets.Packet;
-import com.Kari3600.me.TestGameCommon.packets.PacketEntity;
-import com.Kari3600.me.TestGameCommon.packets.PacketEntityAdd;
-import com.Kari3600.me.TestGameCommon.packets.PacketGame;
-import com.Kari3600.me.TestGameCommon.packets.UDPPacketListener;
+import com.Kari3600.me.TestGameCommon.events.GameEvent;
+import com.Kari3600.me.TestGameCommon.events.ServerBoundEvent;
+import com.Kari3600.me.TestGameCommon.game.GameResync;
 import com.Kari3600.me.TestGameCommon.packets.UDPSingleConnection;
-import com.Kari3600.me.TestGameClient.util.Object3D;
-import com.Kari3600.me.TestGameCommon.Entity;
 
-public class GameEngineClient extends TimerTask implements UDPPacketListener {
+public class GameEngineClient extends GameEngine {
+    public static GameEngineClient getInstance() {
+        return (GameEngineClient) instance;
+    }
 
     private final UDPSingleConnection connection;
-    private final ConcurrentHashMap<Long,byte[]> buffer = new ConcurrentHashMap<>();
-    private int bufferSize;
+    protected final ConcurrentHashMap<Long, List<GameEvent>> buffer = new ConcurrentHashMap<>();
+    protected int bufferSize;
     private Champion character;
-    private long tick = 0;
 
     public UDPSingleConnection getConnection() {
         return connection;
@@ -39,52 +38,64 @@ public class GameEngineClient extends TimerTask implements UDPPacketListener {
         this.character = character;
     }
 
-    @Override
-    public void run() {
-        //System.out.println("Tick");
-        if (tick<0) return;
-        buffer.put(tick++,GameState.getCurrentGameState().serialize());
-        buffer.remove(tick-bufferSize);
-        GameState.getCurrentGameState().tick();
-        //System.out.println(String.format("New player position: %f, %f, %f",player.getPosition().x,player.getPosition().y,player.getPosition().z));
-    }
-
-    @Override
-    public void onPacket(Packet packet, InetAddress address) {
-        if (!(packet instanceof PacketGame)) return;
-        PacketGame packetGame = (PacketGame) packet;
-        long tickID = packetGame.getTick();
-        if (tickID > tick) {
-            //TODO better error catching
-            System.err.println("Simulation delayed.");
-            return;
-        }
-        byte[] serializedGameState = buffer.get(tickID);
-        if (serializedGameState == null) {
-            //TODO resync simulation
-            System.err.println("Outdated packet.");
-            return;
-        }
-        GameState gameState = GameState.deserialize(serializedGameState);
-        gameState.addEvent(packetGame);
-        GameState.setCurrentGameState(gameState);
-        for (long subTick = tickID; subTick <= tick; subTick++) {
-            gameState.tick();
-            buffer.put(subTick, gameState.serialize());
-        }
+    public void sendPacket(Packet packet) {
+        connection.sendPacket(packet);
     }
 
     public GameEngineClient(InetAddress host) {
-        this.connection = new UDPSingleConnection(host);
+        instance = this;
+        GameState.setCurrentGameState(new GameState(-100000));
+        this.connection = new UDPSingleConnection(new InetSocketAddress(host, 2138));
         connection.register(this);
         int delta90 = (int) connection.checkConnection();
-        bufferSize = (int) (delta90*GameState.TPS/1000)+1;
+        bufferSize = (int) (delta90*GameState.TPS/1000)+2;
         System.out.println("Buffer size: "+bufferSize);
-        tick = -bufferSize/2;
-        //TODO init buffer
-        for (int x=0;x<bufferSize;++x) {
-            buffer.put((long)x, new ConcurrentLinkedQueue<>());
+        for (int x=-bufferSize;x<=0;++x) {
+            buffer.put((long)x, new ArrayList<>());
         }
     }
 
+    @Override
+    public void run() {
+        long tick = GameState.getCurrentGameState().getTick();
+        List<GameEvent> events = buffer.remove(tick);
+        tick++;
+        buffer.put(tick+bufferSize,new ArrayList<>());
+        GameState.getCurrentGameState().tick(events);
+    }
+
+    @Override
+    public void fireEvent(GameEvent event) {
+        if (event instanceof ServerBoundEvent) return;
+        buffer.get(event.getTick()).add(event);
+    }
+
+    @Override
+    public void onPacket(Packet packet, InetSocketAddress address) {
+        if (packet instanceof GameResync) {
+            System.out.println("Resynchronizing game");
+            GameResync resync = (GameResync) packet;
+            long currServerTick = (long) (resync.getTick() + (System.currentTimeMillis()-resync.getTime())*GameState.TPS/1000);
+            GameState.setCurrentGameState(new GameState(currServerTick-bufferSize));
+            buffer.clear();
+            for (long x=currServerTick-bufferSize;x<=currServerTick;++x) {
+                buffer.put(x, new ArrayList<>());
+            }
+        }
+        if (!(packet instanceof GameEvent)) return;
+        GameEvent event = (GameEvent) packet;
+        long eventTick = event.getTick();
+        long currTick = GameState.getCurrentGameState().getTick();
+        if (eventTick < currTick) {
+            // TODO resync simulation
+            System.out.println("Outdated packet, resynchronizing");
+            return;
+        }
+        if (eventTick > currTick+bufferSize) {
+            // TODO buffer overflow
+            System.out.println("Buffer overflow, resynchronizing (tick: "+currTick+", max buffer tick: "+(currTick+bufferSize)+", event tick: "+eventTick+")");
+            return;
+        }
+        buffer.get(eventTick).add(event);
+    }
 }

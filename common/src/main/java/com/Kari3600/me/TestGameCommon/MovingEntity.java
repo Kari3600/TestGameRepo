@@ -16,15 +16,14 @@ public abstract class MovingEntity extends LivingEntity {
         this.path = path;
     }
 
-    protected abstract int moveSpeed();
     public void setMoveSpeed(int speed) {
         this.moveSpeed = speed;
     }
 
     @Override
-    public void perTick(float TPS) {
+    public void perTick() {
         if (path == null) return;
-        Vector3[] res = path.progress(getPosition(), moveSpeed/TPS);
+        Vector3[] res = path.progress(getPosition(), moveSpeed/GameState.TPS);
         if (res == null) {
             path = null;
             return;
@@ -33,7 +32,8 @@ public abstract class MovingEntity extends LivingEntity {
         getMatrix().lookVector(res[1]);
     }
 
-    public MovingEntity(GameState ge, UUID id) {
-        super(ge,id);
+    public MovingEntity(UUID id, int collisionRadius, int maxHealth, float moveSpeed) {
+        super(id,collisionRadius,maxHealth);
+        this.moveSpeed = moveSpeed;
     }
 }

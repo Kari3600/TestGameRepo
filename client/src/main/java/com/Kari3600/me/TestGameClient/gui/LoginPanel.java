@@ -3,11 +3,11 @@ package com.Kari3600.me.TestGameClient.gui;
 import javax.swing.*;
 
 import com.Kari3600.me.TestGameClient.Main;
+import com.Kari3600.me.TestGameCommon.account.LoginRequest;
+import com.Kari3600.me.TestGameCommon.account.LoginResponse;
+import com.Kari3600.me.TestGameCommon.account.LoginResult;
+import com.Kari3600.me.TestGameCommon.account.LoginTask;
 import com.Kari3600.me.TestGameCommon.packets.TCPConnection;
-import com.Kari3600.me.TestGameCommon.packets.PacketLoginRequest;
-import com.Kari3600.me.TestGameCommon.packets.PacketLoginResponse;
-import com.Kari3600.me.TestGameCommon.packets.PacketLoginResult;
-import com.Kari3600.me.TestGameCommon.packets.PacketLoginTask;
 import com.Kari3600.me.TestGameCommon.util.EncryptionUtil;
 
 import java.awt.*;
@@ -68,18 +68,18 @@ public class LoginPanel extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 isLoggingIn = true;
                 TCPConnection conn = Main.getConnection();
-                conn.sendPacketRequest(new PacketLoginRequest().setUsername(String.valueOf(usernameField.getText()))).thenAcceptAsync(packet -> {
-                    if (!(packet instanceof PacketLoginTask)) {
+                conn.sendPacketRequest(new LoginRequest(String.valueOf(usernameField.getText()))).thenAcceptAsync(packet -> {
+                    if (!(packet instanceof LoginTask)) {
                         System.out.println("Wrong packet");
                         return;
                     }
-                    String salt = ((PacketLoginTask) packet).getSalt();
-                    conn.sendPacketRequest(new PacketLoginResponse().setPassword(EncryptionUtil.encrypt(salt+EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword()))))).thenAccept(resultPacket -> {
-                        if (!(resultPacket instanceof PacketLoginResult)) {
+                    String salt = ((LoginTask) packet).getSalt();
+                    conn.sendPacketRequest(new LoginResponse(EncryptionUtil.encrypt(salt+EncryptionUtil.encrypt(String.valueOf(passwordField.getPassword()))))).thenAccept(resultPacket -> {
+                        if (!(resultPacket instanceof LoginResult)) {
                             System.out.println("Wrong packet");
                             return;
                         }
-                        PacketLoginResult loginResult = (PacketLoginResult) resultPacket;
+                        LoginResult loginResult = (LoginResult) resultPacket;
                         switch (loginResult.getStatus()) {
                             case 0:
                             new ClientPane();

@@ -1,5 +1,7 @@
 package com.Kari3600.me.TestGameCommon.packets;
 
+import com.Kari3600.me.RapidSerializer.serializers.RapidSerializer;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.net.InetAddress;
 
 public class TCPConnection {
+    private final RapidSerializer<Packet> packetSerializer = RapidSerializer.getSerializer(Packet.class);
 
     private Socket socket;
     private DataOutputStream oos;
@@ -32,7 +35,7 @@ public class TCPConnection {
     public Packet waitForPacket() {
         try {
             //System.out.println("Waiting for packet on IP: "+getHostAddress());
-            Packet returnPacket = PacketManager.fromStream(ois);
+            Packet returnPacket = packetSerializer.deserialize(ois);
             //System.out.println("Received packet "+returnPacket.getClass()+" on IP: "+getHostAddress());
             return returnPacket;
         } catch (IOException e) {
@@ -47,7 +50,7 @@ public class TCPConnection {
     public void sendPacket(Packet packet) {
         try {
             //System.out.println("Sending packet "+packet.getClass()+" on IP: "+getHostAddress());
-            packet.write(oos);
+            packetSerializer.serialize(oos, packet);
             oos.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,10 +62,10 @@ public class TCPConnection {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 //System.out.println("Sending packet "+packet.getClass()+" on IP: "+getHostAddress());
-                packet.write(oos);
+                packetSerializer.serialize(oos, packet);
                 oos.flush();
                 //System.out.println("Waiting for packet on IP: "+getHostAddress());
-                Packet returnPacket = PacketManager.fromStream(ois);
+                Packet returnPacket = packetSerializer.deserialize(ois);
                 //System.out.println("Received packet "+returnPacket.getClass()+" on IP: "+getHostAddress());
                 return returnPacket;
             } catch (Exception e) {

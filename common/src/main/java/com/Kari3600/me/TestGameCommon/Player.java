@@ -1,6 +1,7 @@
 package com.Kari3600.me.TestGameCommon;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ public class Player {
     private final String username;
     private InetAddress address;
     private TCPConnection connection;
+    private InetSocketAddress socketAddress;
     private Class<? extends Champion> champion;
     private MovingEntity controllingEntity;
 
@@ -27,6 +29,14 @@ public class Player {
 
     public InetAddress getAddress() {
         return address;
+    }
+
+    public InetSocketAddress getSocketAddress() {
+        return socketAddress;
+    }
+
+    public void setSocketAddress(InetSocketAddress socketAddress) {
+        this.socketAddress = socketAddress;
     }
 
     public TCPConnection getConnection() {
@@ -55,5 +65,10 @@ public class Player {
         this.address = connection.getHostAddress();
         players.put(address, this);
         // TODO doubled players
+    }
+
+    @Override
+    public String toString() {
+        return username;
     }
 }

@@ -24,7 +24,7 @@ public class Main {
         //gameState.registerEntity(new Braum());
         //new Timer().scheduleAtFixedRate(gameState, 1000L/20, 1000L/20);
         ServerSocketManager ssm = new ServerSocketManager();
-        new UDPConnection().register(ssm);
+        new UDPConnection(2138).register(ssm);
         new Thread(ssm).start();
         
         System.out.println("Hello World");

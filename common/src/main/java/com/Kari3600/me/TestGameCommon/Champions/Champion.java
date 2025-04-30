@@ -10,9 +10,7 @@ import com.Kari3600.me.TestGameCommon.Player;
 
 public abstract class Champion extends MovingEntity {
     private Player player;
-    protected HashMap<Ability.Key,Ability> abilities = new HashMap<Ability.Key,Ability>();
-
-    protected abstract void setUpAbilities();
+    protected AbilitySet abilities;
 
     public Player getPlayer() {
         return player;
@@ -22,16 +20,16 @@ public abstract class Champion extends MovingEntity {
         this.player = player;
     }
     
-    public Ability getAbility(Ability.Key key) {
-        return abilities.get(key);
+    public AbilitySet getAbilities() {
+        return abilities;
     }
 
     public void onDeath(Entity killer) {
         // TODO implement champ death
     }
 
-    public Champion(GameState ge, UUID id) {
-        super(ge,id);
-        setUpAbilities();
+    public Champion(UUID id, int collisionRadius, int maxHealth, float moveSpeed, AbilitySet abilities) {
+        super(id,collisionRadius,maxHealth,moveSpeed);
+        this.abilities = abilities;
     }
 }

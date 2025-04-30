@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 //import com.Kari3600.me.TestGameCommon.packets.PacketEntityAdd;
-import com.Kari3600.me.TestGameCommon.packets.PacketMoveCommand;
+import com.Kari3600.me.TestGameCommon.commands.MoveCommand;
 import com.Kari3600.me.TestGameCommon.util.Vector2;
 
 public class MouseHandler implements MouseListener {
@@ -21,7 +21,8 @@ public class MouseHandler implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         gr.toWorldLocation(new Vector2(e.getX(),e.getY())).thenAcceptAsync(location -> {
-            ge.getConnection().sendPacket(new PacketMoveCommand().setLocation(location));
+            System.out.println("Sending MoveCommand("+location+")");
+            ge.sendPacket(new MoveCommand(location));
         });
     }
 
